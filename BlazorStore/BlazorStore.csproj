@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <StartupObject>BlazorStore.Program</StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlazorStore.Model\BlazorStore.Model.csproj" />
+    <ProjectReference Include="..\BlazorStore.Shared\BlazorStore.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

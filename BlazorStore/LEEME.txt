@@ -1,0 +1,6 @@
+﻿El proyecto viene preconfigurado con dos usuarios:
+
+- info@blazorstore.com, el administrador del comercio.
+- johnsmith@myserver.com, un cliente.
+
+En ambos casos la contraseña es "Blazor1234!".

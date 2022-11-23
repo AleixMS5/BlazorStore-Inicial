@@ -1,0 +1,20 @@
+﻿
+<h3 class="featured-title mt-2">Featured products</h3>
+<div class="product-list featured">
+   @{
+       if (Products!=null)
+       {
+        @foreach (var product in Products)
+        {
+                <FeaturedProduct Product="product" />
+        }
+       }
+    }
+
+</div>
+
+@code {
+
+    [Parameter]  public IReadOnlyList<ProductDto> Products { get; set; }
+  
+}

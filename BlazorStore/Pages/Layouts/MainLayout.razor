@@ -1,0 +1,62 @@
+﻿@inherits LayoutComponentBase
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="">Blazor<b>Store</b></a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topNavBar" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="topNavBar">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">Home</NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="catalog">Catalog</NavLink>
+            </li>
+            <li class="nav-item">
+                <AuthorizeView>
+                    <Authorized>
+                        <NavLink class="nav-link" href="my-account">My account</NavLink>
+                    </Authorized>
+                    <NotAuthorized>
+                        <NavLink class="nav-link" href="login">Login/Register</NavLink>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </li>
+            <AuthorizeView Roles="admin">
+                <li class="nav-item">
+                    <NavLink class="nav-link option-manage" href="admin">Manage</NavLink>
+                </li>
+            </AuthorizeView>
+            <AuthorizeView>
+                <li class="nav-item">
+                        <form method="post" action="/account/logout">
+                            <button class="nav-link btn-danger ml-2 border-0">Logout</button>
+                        </form>
+                </li>
+            </AuthorizeView>
+        </ul>
+
+        <div class="navbar-cart d-none d-sm-inline-block">
+            <CartStatus></CartStatus>
+        </div>
+    </div>
+</nav>
+<div class="page p-2">
+
+    <div class="p-2 bg-info text-white d-block d-lg-none mb-2 text-center">
+        <div class="navbar-cart d-inline-block text-white">
+            <CartStatus>
+                <NoItems>No items in cart</NoItems>
+            </CartStatus>
+        </div>
+    </div>
+
+    @Body
+</div>
+<hr />
+<div class="footer bg-light p-2">
+    Company | Privacy | Legal | &copy; @DateTime.Now.Year BlazorStore Ltd.
+</div>

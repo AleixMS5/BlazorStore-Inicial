@@ -1,0 +1,31 @@
+﻿@using BlazorStore.Model.Services.Catalog
+@inject ICatalogServices CatalogServices
+<h3 class="listing-title">Products</h3>
+
+@if (products != null && products.Any())
+{
+    <h4 class="listing-subtitle">Showing @Criteria.ToString() (@products.Count results), sorted by @Criteria.Sort.AsString()</h4>
+    <div class="product-list">
+        @if(products!=null){
+        @foreach (var product in products)
+        {
+            <CatalogProduct Product="product" />
+        }
+        }
+    </div>
+}
+else
+{
+    <h4 class="listing-subtitle">Searching @Criteria.ToString()</h4>
+    <h4 class="listing-subtitle text-danger">🛇 No products found</h4>
+}
+
+@code {
+    [Parameter] public SearchCriteria Criteria { get; set; }
+
+    IReadOnlyList<ProductDto> products;
+    protected override async Task OnParametersSetAsync()
+    {
+        products = await CatalogServices.SearchAsync(Criteria);
+    }
+}

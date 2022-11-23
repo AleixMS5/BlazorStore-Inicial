@@ -1,0 +1,52 @@
+﻿@page "/catalog/product/{id:int}/{slug}"
+@inject IProductServices ProductServices
+
+@if (isLoading)
+{
+    <span class="spinner-border"> Loading...</span>
+}
+else
+{
+    <div class="product-details">
+        <div class="row">
+            <div class="col-12 col-sm-4">
+                <img src="images/@Product.Image" alt="@Product.Name" class="img-fluid" />
+            </div>
+            <div class="col-12 col-sm-6">
+                <h2>@Product.Name</h2>
+                <p class="description">@Product.Description</p>
+                <p class="price">
+                    @if (Product.PrevPrice != Product.Price)
+                    {
+                        <span class="sale-label">SALE!</span>
+                        <span class="old-price">$ @Product.PrevPrice.ToString("#,##0.#0")</span>
+                    }
+                    <span class="current-price">$ @Product.Price.ToString("#,##0.#0")</span>
+                </p>
+                <div class="form-group form-inline">
+                    <div class="quantity">
+                        <label>Quantity:</label>
+                        <input type="number" min="1" max="100" @bind="quantity" class="text-right ml-2" />
+                    </div>
+                    <AddToCartButton Product="Product" Quantity="quantity" class="ml-2 btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    [Parameter] public string Slug { get; set; }
+
+    ProductDto Product;
+    int quantity = 1;
+    bool isLoading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        Product = await ProductServices.GetByIdAsync(Id);
+        isLoading = false;
+    }
+}

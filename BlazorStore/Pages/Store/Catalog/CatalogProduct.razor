@@ -1,0 +1,61 @@
+@using System.Text
+@inject NavigationManager NavigationManager
+
+<div class="product" @onclick="GotoDetails">
+    <img src="images/@Product.Image" alt="@Product.Name" />
+    <div class="product-info">
+        <h1>@Product.Name</h1>
+        @{
+            if (Product.PrevPrice == Product.Price)
+            {
+                <p class="oldprice none">&nbsp;</p>
+                <p class="price">$ @Product.Price.ToString("#,##0.#0")</p>
+            }
+            else
+            {
+                <p class="oldprice">$ @Product.PrevPrice.ToString("#,##0.#0")</p>
+                <p class="price">$ @Product.Price.ToString("#,##0.#0")</p>
+            }
+        }
+        <p class="description">@Trim(Product.Description)</p>
+    </div>
+    <AddToCartButton Product="Product" />
+</div>
+
+@code {
+
+    [Parameter]
+    public ProductDto Product { get; set; }
+
+    string Trim(string str)
+    {
+        if (str?.Length > 50)
+        {
+            str = str.Substring(0, 50);
+            var indexOfLastSpace = str.LastIndexOfAny(new[] { ' ', '.', '!', '?', ';' });
+            if (indexOfLastSpace > -1)
+            {
+                str = str.Substring(0, indexOfLastSpace).Trim() + "...";
+            }
+        }
+        return str;
+    }
+
+    private void GotoDetails()
+    {
+        NavigationManager.NavigateTo($"catalog/product/{Product.Id}/{GetSlug()}");
+
+        string GetSlug()
+        {
+            var chars = Product.Name.ToArray<char>();
+            for (var i = 0; i < chars.Length; i++)
+            {
+                if (!char.IsLetterOrDigit(chars[i]))
+                {
+                    chars[i] = '-';
+                }
+            }
+            return new string(chars);
+        }
+    }
+}

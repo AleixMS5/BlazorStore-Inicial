@@ -1,0 +1,58 @@
+﻿@page "/"
+@using BlazorStore.Components.Carousel
+@inject ICategoryServices CategoryServices
+@inject ICatalogServices CatalogServices
+
+<h2 class="featured-title">
+    <AuthorizeView>
+        <Authorized Context="auth">Welcome to BlazorStore, @auth.User.Identity.Name!</Authorized>
+        <NotAuthorized>Welcome to BlazorStore!</NotAuthorized>
+    </AuthorizeView>
+</h2>
+
+<Carousel Items="carouselItems"></Carousel>
+<FeaturedProducts Products="featuredProducts"></FeaturedProducts>
+
+@code {
+    CarouselItem[] carouselItems;
+    IReadOnlyList<ProductDto> featuredProducts = new List<ProductDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+       
+        featuredProducts = await CatalogServices.GetHighlightedProductsAsync(6);
+
+        var categories = await CategoryServices.GetAllAsync();
+        carouselItems = categories
+            .Select(c => new CarouselItem(c.Image, c.Name, "catalog/"+c.Name))
+            .ToArray();
+    }
+}
+@*@inject ICategoryServices CategoryServices
+@inject ICatalogServices CatalogServices
+
+<h2 class="featured-title">
+    <AuthorizeView>
+        <Authorized Context="auth">Welcome to BlazorStore, @auth.User.Identity.Name!</Authorized>
+        <NotAuthorized>Welcome to BlazorStore!</NotAuthorized>
+    </AuthorizeView>
+</h2>
+
+<Carousel Items="carouselItems"></Carousel>
+<FeaturedProducts Products="featuredProducts"></FeaturedProducts>
+
+@code {
+    CarouselItem[] carouselItems;
+    IReadOnlyList<ProductDto> featuredProducts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var categories = await CategoryServices.GetAllAsync();
+        carouselItems = categories
+            .Select(c => new CarouselItem(c.Image, c.Name, "catalog/"+c.Name))
+            .ToArray();
+        featuredProducts = await CatalogServices.GetHighlightedProductsAsync(6);
+    }
+}*@

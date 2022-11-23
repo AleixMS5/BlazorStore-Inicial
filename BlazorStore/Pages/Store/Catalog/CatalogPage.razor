@@ -1,0 +1,26 @@
+﻿@page "/catalog"
+@page "/catalog/{category}"
+@using BlazorStore.Model.Services.Catalog
+
+<h3 class="featured-title">Browse catalog</h3>
+
+<div class="row catalog">
+    <div class="col-12 col-sm-4 col-md-4 col-lg-3 filter">
+        <button class="navbar-toggler d-block d-sm-none mb-2" type="button" data-toggle="collapse" data-target="#filter" aria-controls="filter" aria-expanded="true" aria-label="Toggle filter">
+            <span class="oi oi-magnifying-glass"></span>
+            Show/hide filter
+        </button>
+
+        <div class="collapse show" id="filter">
+            <CatalogFilter @bind-Criteria="criteria" InitialCategoryName="@Category"></CatalogFilter>
+        </div>
+    </div>
+    <div class="col">
+        <ProductList Criteria="criteria"></ProductList>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Category { get; set; }
+    SearchCriteria criteria = new SearchCriteria();
+}

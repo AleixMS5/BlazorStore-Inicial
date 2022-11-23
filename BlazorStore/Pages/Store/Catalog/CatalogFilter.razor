@@ -1,0 +1,103 @@
+﻿@using BlazorStore.Model.Services.Catalog
+@inject ICategoryServices CategoryServices
+<div class="filter-section">
+    <h3>Search</h3>
+    <ul>
+        <li>
+            <input type="text" @bind="Criteria.Term" @bind:event="oninput" @onchange="SearchTermChanged" />
+        </li>
+    </ul>
+</div>
+<div class="filter-section">
+    <h3>Categories</h3>
+    <ul>
+        <li><a class="@(Criteria.CategoryId==null? "selected": string.Empty)" href="" @onclick="()=>SetCategory(null)" @onclick:preventDefault>All categories</a></li>
+        @if (categories!=null){
+        @foreach (var category in categories)
+        {
+            <li><a class="@(category.Id==Criteria.CategoryId? "selected": string.Empty)" href="" @onclick="()=>SetCategory(category)" @onclick:preventDefault>@category.Name</a></li>
+        }
+        }
+    </ul>
+</div>
+<div class="filter-section">
+    <h3>Price</h3>
+    <ul>
+        <li><input type="range" @bind-value="Criteria.MinPrice" @bind-value:event="oninput" @onchange="args=>UpdateMin(args.Value, true)" min="0" max="300" step="10" /> @Criteria.MinPrice€ Min.</li>
+        <li><input type="range" @bind-value="Criteria.MaxPrice" @bind-value:event="oninput" @onchange="args=>UpdateMax(args.Value, true)" min="0" max="300" step="10" /> @Criteria.MaxPrice€ Max.</li>
+    </ul>
+</div>
+<div class="filter-section">
+    <h3>Order by @Criteria.Sort.AsString()</h3>
+    <ul>
+        <li>
+            <label><input type="radio" name="order" value="PriceAsc" checked="@(Criteria.Sort==CatalogSort.PriceAsc)" @onchange="@((_)=>UpdateSort(CatalogSort.PriceAsc))" /> Price (asc)</label>
+        </li>
+        <li>
+            <label><input type="radio" name="order" value="PriceDesc" checked="@(Criteria.Sort==CatalogSort.PriceDesc)" @onchange="@((_)=>UpdateSort(CatalogSort.PriceDesc))" /> Price (desc)</label>
+        </li>
+        <li>
+            <label><input type="radio" name="order" value="DiscountDesc" checked="@(Criteria.Sort==CatalogSort.DiscountDesc)" @onchange="@((_)=>UpdateSort(CatalogSort.DiscountDesc))" /> Discount</label>
+        </li>
+    </ul>
+</div>
+@code {
+    [Parameter] public string InitialCategoryName { get; set; }
+    [Parameter] public SearchCriteria Criteria { get; set; }
+    [Parameter] public EventCallback<SearchCriteria> CriteriaChanged { get; set; }
+    IReadOnlyList<CategoryDto> categories;
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await CategoryServices.GetAllAsync();
+        if (!string.IsNullOrWhiteSpace(InitialCategoryName))
+        {
+            var cat = categories.FirstOrDefault(c => c.Name == InitialCategoryName);
+            if (cat != null)
+            {
+                Criteria.CategoryId = cat.Id;
+                Criteria.CategoryName = cat.Name;
+            }
+        }
+    }
+    async Task SearchTermChanged()
+    {
+        await CriteriaChanged.InvokeAsync(Criteria);
+    }
+    async Task SetCategory(CategoryDto category)
+    {
+        Criteria.CategoryId = category?.Id;
+        Criteria.CategoryName = category?.Name;
+        await CriteriaChanged.InvokeAsync(Criteria);
+    }
+    async Task UpdateMin(object value, bool notifyChanged)
+    {
+        var val = double.Parse(value as string);
+        Criteria.MinPrice = val;
+        CheckRange(val);
+        if (notifyChanged)
+            await CriteriaChanged.InvokeAsync(Criteria);
+    }
+
+    async Task UpdateMax(object value, bool notifyChanged)
+    {
+        var val = double.Parse(value as string);
+        Criteria.MaxPrice = val;
+        CheckRange(val);
+        if (notifyChanged)
+            await CriteriaChanged.InvokeAsync(Criteria);
+    }
+    void CheckRange(double value)
+    {
+        if (Criteria.MinPrice >= Criteria.MaxPrice)
+        {
+            Criteria.MaxPrice = Criteria.MinPrice = value;
+        }
+    }
+    async Task UpdateSort(CatalogSort sort)
+    {
+        Criteria.Sort = sort;
+        await CriteriaChanged.InvokeAsync(Criteria);
+    }
+
+}
