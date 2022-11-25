@@ -1,4 +1,5 @@
 ﻿@page "/catalog/product/{id:int}/{slug}"
+@using BlazorStore.Pages.Store.Cart
 @inject IProductServices ProductServices
 
 @if (isLoading)

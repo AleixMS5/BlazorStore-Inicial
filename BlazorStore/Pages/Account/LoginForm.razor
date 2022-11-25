@@ -1,0 +1,35 @@
+﻿@using Microsoft.AspNetCore.WebUtilities
+@inject NavigationManager NavManager
+<form method="post" action="/account/authenticate">
+    <input type="hidden" name="returnUrl" value="@returnUrl" />
+    @if (!string.IsNullOrWhiteSpace(error))
+    {
+        <div class="my-3 text-danger font-weight-bold">@error</div>
+    }
+    <div class="form-group">
+        <label for="loginemail">Email:</label>
+        <input type="email" class="form-control" name="email" id="loginemail" required/>
+    </div>
+    <div class="form-group">
+        <label for="loginpassword">Password:</label>
+        <input type="password" class="form-control" name="password" id="loginpassword" required/>
+    </div>
+    <button class="btn btn-primary btn-lg">Login</button>
+</form>
+@code {
+    string error, returnUrl;
+
+    protected override void OnInitialized()
+    {
+        var query = NavManager.ToAbsoluteUri(NavManager.Uri).Query;
+        var queryStringParams = QueryHelpers.ParseQuery(query);
+        if (queryStringParams.TryGetValue("error", out var errorParam))
+        {
+            error = errorParam;
+        }
+        if (queryStringParams.TryGetValue("returnUrl", out var returnUrlParam))
+        {
+            returnUrl = returnUrlParam;
+        }
+    }
+}

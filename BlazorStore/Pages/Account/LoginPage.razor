@@ -1,0 +1,19 @@
+﻿@page "/login"
+@attribute [AllowAnonymous]
+
+<div class="row login-page">
+	<div class="col-12 col-md-6 px-3 login-wrap">
+        <h2 class="featured-title">Log in</h2>
+        <div class="px-5">
+            <p class="text-center">If you are a BlazorStore registered user, <br/>please log in using your credentials.</p>
+            <LoginForm></LoginForm>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 signup-wrap px-3">
+        <h2 class="featured-title">Register</h2>
+        <div class="px-5">
+            <p class="text-center">If you are a new BlazorStore customer, please <br />create a new account by filling in the following form.</p>
+            <RegistrationForm></RegistrationForm>
+        </div>
+    </div>
+</div>

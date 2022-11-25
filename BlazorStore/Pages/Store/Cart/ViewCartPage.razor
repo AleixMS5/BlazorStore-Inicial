@@ -1,0 +1,98 @@
+﻿@page "/cart"
+@inject CurrentCart CurrentCart
+@implements IDisposable
+
+<h2 class="featured-title">Cart contents</h2>
+@if (cartItems == null)
+{
+    <p>Loading...</p>
+}
+else if (!cartItems.Any())
+{
+    <h3 class="text-center">The cart is empty</h3>
+}
+else
+{
+    <table class="table table-bordered table-striped cart-items">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Product</th>
+                <th class="text-center">Quantity</th>
+                <th class="text-right">Unit price</th>
+                <th class="text-right">Total price</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var total = 0.0;
+            }
+            @foreach (var item in cartItems)
+            {
+                total += (item.UnitPrice * item.Quantity);
+                <tr>
+                    <td><img src="images/@item.Image"></td>
+                    <td class="align-middle">@item.ProductName</td>
+                    <td class="text-center align-middle"><input type="number" @bind="item.Quantity" @onblur="()=>SetValueAsync(item)" min="1" max="@(Math.Pow(10, FieldLenghts.Product.Quantity) - 1)" maxlength="@FieldLenghts.Product.Quantity" /></td>
+                    <td class="text-right align-middle">@item.UnitPrice.ToString("#,##0.#0")</td>
+                    <td class="text-right align-middle">@((item.UnitPrice * item.Quantity).ToString("#,##0.#0"))</td>
+                    <td class="align-middle text-center"><button class="btn btn-sm bg-danger text-white" @onclick="() => RemoveItem(item.ProductId)">Remove</button></td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5" class="text-right">TOTAL: @total.ToString("#,##0.#0")</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+}
+
+@if (cartItems!=null && cartItems.Any())
+{
+    <div class="text-center">
+        <a class="btn btn-lg btn-secondary" href="checkout">Checkout</a>
+    </div>
+}
+
+@code {
+    IEnumerable<CartItem> cartItems;
+
+    protected override void OnInitialized()
+    {
+        CurrentCart.CartUpdated += OnCartUpdated;
+        cartItems = CurrentCart.Items;
+    }
+
+    void OnCartUpdated(object sender, CartEventArgs args)
+    {
+        cartItems = args.Items;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        CurrentCart.CartUpdated -= OnCartUpdated;
+    }
+
+    private async Task RemoveItem(int productId)
+    {
+        await CurrentCart.RemoveItemAsync(productId);
+    }
+
+    private async Task SetValueAsync(CartItem item)
+    {
+        if (item.Quantity < 1)
+        {
+            item.Quantity = 1;
+        }
+        else if (item.Quantity > Math.Pow(10, FieldLenghts.Product.Quantity) - 1)
+        {
+            item.Quantity = (int)Math.Pow(10, FieldLenghts.Product.Quantity) - 1;
+        }
+        await CurrentCart.SetItemQuantityAsync(item.ProductId, item.Quantity);
+    }
+
+}

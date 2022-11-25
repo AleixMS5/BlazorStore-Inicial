@@ -1,0 +1,40 @@
+﻿@using BlazorStore.Services.Cart
+@inject CurrentCart CurrentCart
+<button @onclick="AddToCart" class="@(@class) addtocart-btn-@addStatus.ToString().ToLower()" @onclick:stopPropagation disabled="@(addStatus!=AddStatus.None)">
+    @if (addStatus == AddStatus.Added)
+    {
+        @:Added!
+    }
+    else
+    {
+        if (addStatus == AddStatus.Adding)
+        {
+            @:<span class="spinner-border spinner-border-sm text-white"></span> Adding...
+        }
+        else
+        {
+            @:Add to Cart
+        }
+    }
+</button>
+@code {
+    [Parameter] public ProductDto Product { get; set; }
+    [Parameter] public int Quantity { get; set; } = 1;
+    [Parameter] public string @class { get; set; }
+    AddStatus addStatus;
+    async Task AddToCart()
+    {
+        addStatus = AddStatus.Adding;
+        await CurrentCart.AddItemAsync(Product, Quantity);
+        addStatus = AddStatus.Added;
+        StateHasChanged();
+        await Task.Delay(2000);
+        addStatus = AddStatus.None;
+    }
+    private enum AddStatus
+    {
+        None,
+        Adding,
+        Added
+    }
+}

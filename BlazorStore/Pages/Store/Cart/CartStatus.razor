@@ -1,0 +1,40 @@
+﻿@implements IDisposable
+@inject CurrentCart CurrentCart
+
+@if (itemsCount > 0)
+{
+    <a class="cart-link" href="cart">
+        <span class="current-cart">🛒 <span class="cart-items-badge @(justUpdated ? "pulse" : "")">@itemsCount</span> items</span>
+    </a>
+}
+else
+{
+    @NoItems
+}
+
+@code {
+    [Parameter] public RenderFragment NoItems { get; set; }
+
+    int itemsCount;
+    bool justUpdated;
+
+    protected override void OnInitialized()
+    {
+        CurrentCart.CartUpdated += OnCartUpdated;
+    }
+
+    public async void OnCartUpdated(object sender, CartEventArgs args)
+    {
+        justUpdated = true;
+        itemsCount = args.Items.Sum(i=>i.Quantity);
+        StateHasChanged();
+        await Task.Delay(1500);
+        justUpdated = false;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        CurrentCart.CartUpdated -= OnCartUpdated;
+    }
+}

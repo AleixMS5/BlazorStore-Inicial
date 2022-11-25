@@ -6,6 +6,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Components\Authoritation\RedirectToLogin.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Components\Authoritation\RedirectToLogin.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.SessionStorage" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BlazorStore.Model\BlazorStore.Model.csproj" />
     <ProjectReference Include="..\BlazorStore.Shared\BlazorStore.Shared.csproj" />
   </ItemGroup>

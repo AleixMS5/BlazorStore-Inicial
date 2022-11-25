@@ -6,6 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using BlazorStore.Services.Cart;
+using Blazored.SessionStorage;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlazorStore
 {
@@ -26,13 +29,15 @@ namespace BlazorStore
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddControllers();
+            services.AddBlazoredSessionStorage();
+            services.AddTransient<BlazorStoreContext>();
             services
                 .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
 
             // BlazorStore specific services
             services.AddBlazorStoreModelServices();
-
+            services.AddScoped<CurrentCart>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

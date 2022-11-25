@@ -1,4 +1,5 @@
 ﻿@using System.Text
+@using BlazorStore.Pages.Store.Cart
 @inject NavigationManager NavigationManager
 
 <div class="product featured" @onclick="GotoDetails">
@@ -7,7 +8,7 @@
         <h1>@Product.Name</h1>
         <p class="price">$ @Product.Price.ToString("#,##0.#0")</p>
     </div>
-    
+     <AddToCartButton Product="Product" />
 </div>
 
 @code {
