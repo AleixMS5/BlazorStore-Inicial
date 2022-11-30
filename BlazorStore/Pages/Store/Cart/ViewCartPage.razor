@@ -17,10 +17,10 @@ else
         <thead>
             <tr>
                 <th></th>
-                <th>Product</th>
-                <th class="text-center">Quantity</th>
-                <th class="text-right">Unit price</th>
-                <th class="text-right">Total price</th>
+                <th>Producto</th>
+                <th class="text-center">Cantidad</th>
+                <th class="text-right">Precio unidad</th>
+                <th class="text-right">Precio total</th>
                 <th></th>
             </tr>
         </thead>
@@ -35,15 +35,15 @@ else
                     <td><img src="images/@item.Image"></td>
                     <td class="align-middle">@item.ProductName</td>
                     <td class="text-center align-middle"><input type="number" @bind="item.Quantity" @onblur="()=>SetValueAsync(item)" min="1" max="@(Math.Pow(10, FieldLenghts.Product.Quantity) - 1)" maxlength="@FieldLenghts.Product.Quantity" /></td>
-                    <td class="text-right align-middle">@item.UnitPrice.ToString("#,##0.#0")</td>
-                    <td class="text-right align-middle">@((item.UnitPrice * item.Quantity).ToString("#,##0.#0"))</td>
+                    <td class="text-right align-middle">@item.UnitPrice.ToString("#,##0.#0")$</td>
+                    <td class="text-right align-middle">@((item.UnitPrice * item.Quantity).ToString("#,##0.#0"))$</td>
                     <td class="align-middle text-center"><button class="btn btn-sm bg-danger text-white" @onclick="() => RemoveItem(item.ProductId)">Remove</button></td>
                 </tr>
             }
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="5" class="text-right">TOTAL: @total.ToString("#,##0.#0")</td>
+                <td colspan="5" class="text-right">TOTAL: @total.ToString("#,##0.#0")$</td>
                 <td></td>
             </tr>
         </tfoot>

@@ -1,0 +1,23 @@
+﻿@inherits LayoutComponentBase
+@layout MainLayout
+<div class="row">
+    <div class="col-12 col-md-2">
+        <h4>Account options</h4>
+        <div class="account-menu">
+            <ul class="navbar-nav bg-light">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="admin/orders">Orders</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="admin/products">Products</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="admin/users">Users</NavLink>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-12 col-md-10">
+        @Body
+    </div>
+</div>

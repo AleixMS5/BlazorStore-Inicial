@@ -1,0 +1,117 @@
+﻿@using BlazorStore.Shared.Utils
+@using BlazorStore.Model.Services.Users
+@inject IUserServices UserServices
+@inject NavigationManager NavManager
+@implements IValidatableObject
+
+<EditForm Model="this" OnValidSubmit="CreateAccount">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <fieldset>
+        <legend>Credentials</legend>
+
+        <div class="form-group">
+            <label for="email">Email:</label> <ValidationMessage For="() => Email" />
+            @if (emailExists)
+            {
+                <span class="text-danger">This email already exists</span>
+            }
+            <InputText class="form-control col-12" id="email" maxlength="@FieldLenghts.User.Email" @bind-Value="Email" @oninput="OnEmailChanged" autocomplete="___"></InputText>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label> <ValidationMessage For="() => Password" />
+            <InputText type="password" class="form-control col-12" id="password" @bind-Value="Password" autocomplete="new-password"></InputText>
+        </div>
+        <div class="form-group">
+            <label for="repeatpassword">Repeat password:</label> <ValidationMessage For="() => RepeatPassword" />
+            <InputText type="password" class="form-control col-12" id="repeatpassword" @bind-Value="RepeatPassword" autocomplete="new-password"></InputText>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>User information</legend>
+        <div class="form-group">
+            <label for="name">Name:</label> <ValidationMessage For="() => Name" />
+            <InputText class="form-control col-12" id="name" @bind-Value="Name" maxlength="@FieldLenghts.User.Name"></InputText>
+        </div>
+        <div class="form-group">
+            <label for="address">Address:</label> <ValidationMessage For="() => Address"></ValidationMessage>
+            <InputText class="form-control col-12" id="address" @bind-Value="Address" maxlength="@FieldLenghts.User.Address"></InputText>
+        </div>
+        <div class="form-group">
+            <label for="city">City:</label> <ValidationMessage For="() => City"></ValidationMessage>
+            <InputText class="form-control col-12" id="city" @bind-Value="City" maxlength="@FieldLenghts.User.City"></InputText>
+        </div>
+        <div class="form-group">
+            <label for="address">Zip Code:</label> <ValidationMessage For="()=>ZipCode"></ValidationMessage>
+            <InputText class="form-control col-3" id="zipcode" @bind-Value="ZipCode" maxlength="@FieldLenghts.User.ZipCode"></InputText>
+        </div>
+        <div class="form-group">
+            <label for="country">State/Province:</label> <ValidationMessage For="()=>State"></ValidationMessage>
+            <InputText class="form-control col-12" id="state" @bind-Value="State" maxlength="@FieldLenghts.User.State"></InputText>
+        </div>
+        <div class="form-group">
+            <label for="country">Country:</label> <ValidationMessage For="()=>Country"></ValidationMessage>
+            <InputText class="form-control col-12" id="country" @bind-Value="Country" maxlength="@FieldLenghts.User.Country"></InputText>
+        </div>
+    </fieldset>
+    <button class="btn btn-primary btn-lg" disabled="@isCreating">
+        @if (isCreating)
+        {
+            @:<span class="spinner-border"></span> Signing up...
+        }
+        else
+        {
+            @:Sign up
+        }
+    </button>
+</EditForm>
+
+@code {
+    bool emailExists = false;
+    bool isCreating;
+
+    [RequiredField, FieldLength(FieldLenghts.User.Email), EmailAddress(ErrorMessage = "Invalid email address")] public string Email { get; set; }
+    [RequiredField, FieldLength(FieldLenghts.User.Name)] public string Name { get; set; }
+    [RequiredField, FieldLength(FieldLenghts.User.Address)] public string Address { get; set; }
+    [RequiredField, FieldLength(FieldLenghts.User.City)] public string City { get; set; }
+    [FieldLength(FieldLenghts.User.Country)] public string ZipCode { get; set; }
+    [RequiredField, FieldLength(FieldLenghts.User.Country)] public string Country { get; set; }
+    [FieldLength(FieldLenghts.User.State)] public string State { get; set; }
+    [RequiredField] public string Password { get; set; }
+    [RequiredField] public string RepeatPassword { get; set; }
+
+    public async Task CreateAccount()
+    {
+        if (emailExists)
+            return;
+
+        isCreating = true;
+        var newUser = new NewUserDto()
+            {
+                Address = Address,
+                ZipCode = ZipCode,
+                Email = Email,
+                Country = Country,
+                Name = Name,
+                City = City,
+                State = State,
+                Password = Password
+            };
+        await UserServices.CreateUserAsync(newUser);
+        NavManager.NavigateTo("login/thankyou");
+    }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (Password != RepeatPassword)
+        {
+            yield return new ValidationResult("Passwords don't match", new[] { nameof(Password), nameof(RepeatPassword) });
+        }
+    }
+
+    private async Task OnEmailChanged(ChangeEventArgs args)
+    {
+        var email = args.Value.ToString();
+        emailExists = !string.IsNullOrWhiteSpace(email) && await UserServices.EmailExistsAsync(email);
+    }
+
+}

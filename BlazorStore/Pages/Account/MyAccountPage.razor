@@ -1,0 +1,22 @@
+﻿@page "/my-account"
+@layout MyAccountLayout
+<h3 class="featured-title">My account</h3>
+@if (name != null)
+{
+    <div class="text-center">
+        <h4>Welcome to BlazorStore, @name!</h4>
+        <p>Use the menu to navigate throught your account information.</p>
+    </div>
+}
+
+@code {
+    string name;
+    [CascadingParameter] Task<AuthenticationState> GetAuthStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await GetAuthStateTask;
+        name = authState.User.Identity.Name;
+    }
+
+}

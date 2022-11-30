@@ -1,0 +1,86 @@
+﻿@page "/my-account/orders"
+@using BlazorStore.Model.Services.Orders
+@inject IOrderServices OrderServices
+
+<h3 class="featured-title">My orders</h3>
+
+@if (orders != null && orders.Any())
+{
+    <div class="col-12 px-5 col-lg-8 offset-lg-2 orders-wrap">
+        <div id="order-list">
+            @foreach (var order in orders)
+            {
+                <div class="card order-item">
+                    <div class="card-header" id="heading@(order.Id)">
+                        <h5 class="mb-0">
+                            <span class="order-date">@order.Date.ToShortDateString() @order.Date.ToShortTimeString()</span>
+                            <a href="#" data-toggle="collapse" data-target="#collapse@(order.Id)" aria-expanded="true" aria-controls="order@(order.Id)">
+                                Order #@order.Id, Status: <strong>@order.Status</strong>.
+                            </a>
+                            @if (order.DeliveryDate != null)
+                            {
+                                <div class="small text-muted mt-2">Delivered at: @order.DeliveryDate.Value.ToShortDateString() @order.DeliveryDate.Value.ToShortTimeString()</div>
+                            }
+                        </h5>
+                    </div>
+
+                    <div id="collapse@(order.Id)" class="collapse" aria-labelledby="heading@(order.Id)" data-parent="#order-list">
+                        <div class="card-body">
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-center">Unit price</th>
+                                    <th class="text-center">Total</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @{
+                                    double total = 0.0;
+                                    foreach (var line in order.Lines)
+                                    {
+                                        var lineTotal = line.UnitPrice * line.Quantity;
+                                        total += lineTotal;
+                                        <tr>
+                                            <td>@line.ProductName</td>
+                                            <td class="text-right">@line.Quantity</td>
+                                            <td class="text-right">@line.UnitPrice.ToString("#,##0.#0")</td>
+                                            <td class="text-right">@((lineTotal).ToString("#,##0.#0"))</td>
+                                        </tr>
+                                    }
+                                }
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <td colspan="4" class="text-right">Total: @total.ToString("#,##0.#0")</td>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else if (orders == null)
+{
+    <div class="text-center"><span class="spinner-border"></span> Loading...</div>
+}
+else
+{
+    <div class="text-center">No orders found.</div>
+}
+
+@code {
+    IReadOnlyList<ExistingOrderDto> orders;
+    [CascadingParameter] Task<AuthenticationState> GetAuthStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await GetAuthStateTask;
+        orders = await OrderServices.GetOrdersAsync(authState.User.GetId());
+    }
+
+}

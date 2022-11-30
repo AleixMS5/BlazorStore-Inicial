@@ -1,0 +1,15 @@
+﻿@page "/checkout/thankyou/{id:int}"
+
+<h2 class="featured-title">Check out</h2>
+<div class="text-center col-12 px-5 col-sm-10 offset-sm-1 col-md-6 offset-md-3">
+    <h3>Thank you for submitting your order</h3>
+    <h4>Order id: #@Id</h4>
+    <p>You'll receive your products next @(DateTime.Now.AddDays(7).ToShortDateString()). 
+        <br/>You can also
+        track this order at any moment from your <a href="my-account">account page</a>.</p>
+    <a href="" class="btn btn-secondary">Go to Home</a>
+</div>
+
+@code{
+    [Parameter] public int Id { get; set; }
+}

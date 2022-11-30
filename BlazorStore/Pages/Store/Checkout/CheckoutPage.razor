@@ -1,0 +1,250 @@
+﻿@page "/checkout"
+@inject CurrentCart CurrentCart
+@inject IOrderServices OrderServices
+@inject IUserServices UserServices
+@inject NavigationManager NavManager
+@attribute [Authorize]
+@implements IDisposable 
+@implements IValidatableObject
+
+<h2 class="featured-title">Checkout</h2>
+<h3 class="your-order">Su pedido</h3>
+@if (cartItems == null)
+{
+    <p class="text-center"><span class="spinner-border"></span> Loading...</p>
+}
+else if (!cartItems.Any())
+{
+    <p class="text-center">The cart is empty</p>
+}
+else
+{
+    <table class="table table-bordered table-striped cart-items">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Producto</th>
+                <th class="text-right">Cantidad</th>
+                <th class="text-right">
+Precio unitario</th>
+                <th class="text-right">
+Precio total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var total = 0.0;
+                var items = 0;
+            }
+            @foreach (var item in cartItems)
+            {
+                items += item.Quantity;
+                total += (item.UnitPrice * item.Quantity);
+                <tr>
+                    <td><img src="images/@item.Image" /></td>
+                    <td class="align-middle">@item.ProductName</td>
+                    <td class="text-right align-middle">@item.Quantity</td>
+                    <td class="text-right align-middle">@item.UnitPrice.ToString("#,##0.#0")</td>
+                    <td class="text-right align-middle">@((item.UnitPrice*item.Quantity).ToString("#,##0.#0"))</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="text-right">Items: @items.ToString("#,##0")</td>
+                <td colspan="5" class="text-right">TOTAL: @total.ToString("#,##0.#0")</td>
+            </tr>
+        </tfoot>
+    </table>
+    <EditForm Model="this" OnValidSubmit="DoCheckout" OnInvalidSubmit="()=>isInvalid = true" class="shipping-form">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <div class="row checkout-info">
+            <div class="col-12 col-md-6 shipping-wrap">
+                <h3>Shipping information</h3>
+                <div class="form-group">
+                    <label for="name">Name:</label> <ValidationMessage For="() => Name" />
+                    <InputText @bind-Value="Name" id="name" class="form-control"></InputText>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label> <ValidationMessage For="() => Email" />
+                    <InputText type="email" @bind-Value="Email" id="email" class="form-control"></InputText>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address:</label> <ValidationMessage For="() => Address" />
+                    <InputText @bind-Value="Address" id="address" class="form-control" maxlength="@FieldLenghts.User.Address"></InputText>
+                </div>
+                <div class="form-group">
+                    <label for="city">City:</label> <ValidationMessage For="() => City" />
+                    <InputText @bind-Value="City" id="city" class="form-control" maxlength="@FieldLenghts.User.City"></InputText>
+                </div>
+                <div class="form-group">
+                    <label for="zip">Zip code:</label> <ValidationMessage For="() => ZipCode" />
+                    <InputText @bind-Value="ZipCode" id="zip" class="form-control col-3" maxlength="@FieldLenghts.User.ZipCode"></InputText>
+                </div>
+                <div class="form-group">
+                    <label for="stete">State/Province:</label> <ValidationMessage For="() => State" />
+                    <InputText @bind-Value="State" id="state" class="form-control" maxlength="@FieldLenghts.User.State"></InputText>
+                </div>
+                <div class="form-group">
+                    <label for="country">Country:</label> <ValidationMessage For="() => Country" />
+                    <InputText @bind-Value="Country" id="country" class="form-control" maxlength="@FieldLenghts.User.Country"></InputText>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 payment-wrap">
+                <h3>Payment information</h3>
+                <div class="form-group">
+                    <label for="nameoncard">Name on card:</label> <ValidationMessage For="() => NameOnCard" />
+                    <InputText @bind-Value="NameOnCard" id="nameoncard" class="form-control" maxlength="@FieldLenghts.Payments.NameOnCard"></InputText>
+                </div>
+                <div class="form-group">
+                    <label for="cardnumber">Card number:</label> <ValidationMessage For="() => CardNumber" />
+                    <InputText @bind-Value="CardNumber" id="cardnumber" class="form-control" maxlength="@FieldLenghts.Payments.CardNumber"></InputText>
+                    <div class="description small text-muted">Tip: use '4111111111111111' to test</div>
+                </div>
+                <div class="form-group">
+                    <label for="cvccode">CVC Code</label> <ValidationMessage For="() => CvcCode" />
+                    <InputText @bind-Value="CvcCode" id="cvccode" class="form-control col-6 col-sm-10 col-md-6 col-lg-4" maxlength="@FieldLenghts.Payments.CvcCode"></InputText>
+                </div>
+                <div class="form-group">
+                    <label for="cardvalid">Valid until (MM/YYYY):</label> <ValidationMessage For="() => ValidUntilMonth" />
+                    <div>
+                        <InputSelectNumber @bind-Value="ValidUntilMonth" class="form-control w-auto d-inline-block" id="cardvalid">
+                            @for (int i = 1; i <= 12; i++)
+                                {
+                                <option>@i</option>
+                                }
+                        </InputSelectNumber>
+                        /
+                        <InputSelectNumber @bind-Value="ValidUntilYear" class="form-control w-auto d-inline-block" id="cardvalid">
+                            @for (int i = DateTime.Now.Year; i <= DateTime.Now.Year + 10; i++)
+                                {
+                                <option>@i</option>
+                                }
+                        </InputSelectNumber>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 text-center">
+                @if (isInvalid)
+                {
+                    <div class="m-5">
+                        <span class="p-4 bg-danger text-white">
+                            Corrija los errores de validación e intente enviar el pedido nuevamente.
+                        </span>
+                    </div>
+                }
+                <button class="btn btn-success btn-lg">
+                    @if (isSubmitting)
+                    {
+                        @:<span class="spinner-border"></span> Enviando la orden...
+                    }
+                    else
+                    {
+                        @:comprar
+                    }
+                </button>
+            </div>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [CascadingParameter] Task<AuthenticationState> GetAuthenticationStateTask { get; set; }
+
+    // Shipping info
+    [RequiredField, FieldLength(FieldLenghts.User.Email), EmailAddress(ErrorMessage="Email invalido")]
+    public string Email { get; set; }
+    [RequiredField, FieldLength(FieldLenghts.User.Name)]
+    public string Name { get; set; }
+    [RequiredField, FieldLength(FieldLenghts.User.Address)]
+    public string Address { get; set; }
+    [RequiredField, FieldLength(FieldLenghts.User.City)]
+    public string City { get; set; }
+    [FieldLength(FieldLenghts.User.Country)]
+    public string ZipCode { get; set; }
+    [RequiredField, FieldLength(FieldLenghts.User.State)]
+    public string State { get; set; }
+    [RequiredField, FieldLength(FieldLenghts.User.Country)]
+    public string Country { get; set; }
+
+    // Payment info
+    [RequiredField, FieldLength(FieldLenghts.Payments.NameOnCard)]
+    public string NameOnCard { get; set; }
+    [RequiredField, CreditCard(ErrorMessage = "Introduce un numero de tarjeta valido"), FieldLength(FieldLenghts.Payments.CardNumber)]
+    public string CardNumber { get; set; }
+    public int ValidUntilMonth { get; set; }
+    public int ValidUntilYear { get; set; }
+    public string CvcCode { get; set; }
+
+    int currentUserId;
+    bool isInvalid;
+    bool isSubmitting;
+    IEnumerable<CartItem> cartItems;
+
+    protected override async Task OnInitializedAsync()
+    {
+        CurrentCart.CartUpdated += OnCartUpdated;
+        cartItems = CurrentCart.Items;
+        var authState = await GetAuthenticationStateTask;
+        currentUserId = authState.User.GetId();
+        var user = await UserServices.GetUserByIdAsync(currentUserId);
+        Name = user.Name;
+        Email = user.Email;
+        ZipCode = user.ZipCode;
+        Country = user.Country;
+        City = user.City;
+        State = user.State;
+        Address = user.Address;
+        NameOnCard = user.Name;
+    }
+
+    void OnCartUpdated(object sender, CartEventArgs args)
+    {
+        cartItems = args.Items;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        CurrentCart.CartUpdated -= OnCartUpdated;
+    }
+
+    protected async Task DoCheckout()
+    {
+        isInvalid = false;
+        var dto = new NewOrderDto()
+        {
+            Name = Name,
+            Email = Email,
+            Address = Address,
+            ZipCode = ZipCode,
+            City = City,
+            State = State,
+            Country = Country,
+            NameOnCard = NameOnCard,
+            ValidUntilMonth = ValidUntilMonth,
+            ValidUntilYear = ValidUntilYear,
+            CardNumber = CardNumber,
+            CvcCode = CvcCode,
+            Lines = cartItems.Select(i => new OrderLineDto() { Quantity = i.Quantity, ProductId = i.ProductId, UnitPrice = i.UnitPrice, ProductName = i.ProductName })
+        };
+        isSubmitting = true;
+        var orderId = await OrderServices.SubmitOrderAsync(dto, currentUserId);
+        await CurrentCart.RemoveAllAsync();
+        NavManager.NavigateTo($"checkout/thankyou/{orderId}");
+    }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (ValidUntilYear == 0 || ValidUntilMonth == 0)
+        {
+            yield return new ValidationResult("Please enter card validity", new[] { nameof(ValidUntilMonth) });
+        }
+        else if (ValidUntilYear <= DateTime.Now.Year && ValidUntilMonth < DateTime.Now.Month)
+        {
+            yield return new ValidationResult("The credit card has expired", new[] { nameof(ValidUntilMonth) });
+        }
+    }
+}
