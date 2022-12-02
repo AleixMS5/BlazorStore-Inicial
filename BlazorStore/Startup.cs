@@ -30,7 +30,7 @@ namespace BlazorStore
             services.AddServerSideBlazor();
             services.AddControllers();
             services.AddBlazoredSessionStorage();
-            services.AddTransient<BlazorStoreContext>();
+            services.AddDbContext<BlazorStoreContext>();
             services
                 .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
@@ -45,10 +45,10 @@ namespace BlazorStore
         {
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-US");
 
-            using (var db = new BlazorStoreContext())
-            {
-                db.Database.EnsureCreated();
-            }
+            //using (var db = new BlazorStoreContext())
+            //{
+            //    db.Database.EnsureCreated();
+            //}
 
             if (env.IsDevelopment())
             {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using BlazorStore.Shared.Utils;
 
 namespace BlazorStore.Model.Data
@@ -15,8 +16,8 @@ namespace BlazorStore.Model.Data
         public int UserId { get; set; }
         public DateTime Date { get; set; } = DateTime.UtcNow;
         public DateTime? DeliveryDate { get; set; }
-        public OrderStatus Status { get; set; } = OrderStatus.Submitted;
-
+        
+        public  int Status { get;set; }
         // Shipping info
         [Required, MaxLength(FieldLenghts.User.Name)]
         public string Name { get; set; }

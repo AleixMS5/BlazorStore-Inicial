@@ -46,7 +46,7 @@ namespace BlazorStore.Model.Data
                 Date = DateTime.Now,
                 Email = jon.Email,
                 NameOnCard = jon.Name,
-                Status = OrderStatus.Submitted,
+                Status = (int)OrderStatus.Submitted,
             };
             return new[] {order};
         }

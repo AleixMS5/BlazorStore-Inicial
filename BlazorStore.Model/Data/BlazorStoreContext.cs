@@ -8,6 +8,12 @@ namespace BlazorStore.Model.Data
 {
     public class BlazorStoreContext: DbContext
     {
+        public BlazorStoreContext(DbContextOptions<BlazorStoreContext> opt) : base(opt)
+        {
+
+
+        }
+
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<User> Users { get; set; }
@@ -15,7 +21,7 @@ namespace BlazorStore.Model.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
-            builder.UseSqlServer("Server=.;Database=store2;user id=sa;password=DISI;encrypt=false;MultipleActiveResultSets=true", opt =>
+            builder.UseSqlServer("Server=.\\SQLEXPRESS;Database=DisiBlazorStore;Integrated Security=True;Encrypt=False;TrustServerCertificate=False;MultipleActiveResultSets=True", opt =>
             {
                 opt.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName);
             });

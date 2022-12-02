@@ -13,12 +13,12 @@
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">Home</NavLink>
             </li>
             <li class="nav-item">
-                <NavLink class="nav-link" href="catalog">Catalog</NavLink>
+                <NavLink class="nav-link" href="catalog">Catalogo</NavLink>
             </li>
             <li class="nav-item">
                 <AuthorizeView>
                     <Authorized>
-                        <NavLink class="nav-link" href="my-account">My account</NavLink>
+                        <NavLink class="nav-link" href="my-account">Mi cuenta</NavLink>
                     </Authorized>
                     <NotAuthorized>
                         <NavLink class="nav-link" href="login">Login/Register</NavLink>
@@ -27,7 +27,7 @@
             </li>
             <AuthorizeView Roles="admin">
                 <li class="nav-item">
-                    <NavLink class="nav-link option-manage" href="admin">Manage</NavLink>
+                    <NavLink class="nav-link option-manage" href="admin">Administrar</NavLink>
                 </li>
             </AuthorizeView>
             <AuthorizeView>
@@ -49,7 +49,7 @@
     <div class="p-2 bg-info text-white d-block d-lg-none mb-2 text-center">
         <div class="navbar-cart d-inline-block text-white">
             <CartStatus>
-                <NoItems>No items in cart</NoItems>
+                <NoItems>No hay items en el carrito</NoItems>
             </CartStatus>
         </div>
     </div>
@@ -58,5 +58,5 @@
 </div>
 <hr />
 <div class="footer bg-light p-2">
-    Company | Privacy | Legal | &copy; @DateTime.Now.Year BlazorStore Ltd.
+    Compañia | Privacidad | Legal | &copy; @DateTime.Now.Year BlazorStore Ltd.
 </div>

@@ -1,0 +1,127 @@
+﻿@typeparam ItemType
+
+<CascadingValue Value="this" IsFixed="true">
+    @ChildContent
+</CascadingValue>
+
+@if (totalItems > 0)
+{
+    <p>
+        @totalItems items, showing page @currentPage of @totalPages.
+    </p>
+    <p>
+        <button class="btn btn-sm" @onclick="() => SetPageAsync(1)" disabled="@(isLoading || currentPage == 1)">&lt;&lt; First</button>
+        <button class="btn btn-sm" @onclick="() => SetPageAsync(currentPage - 1)" disabled="@(isLoading || currentPage == 1)">&lt; Previous</button>
+        <button class="btn btn-sm" @onclick="() => SetPageAsync(currentPage + 1)" disabled="@(isLoading || currentPage == totalPages)">Next &gt;</button>
+        <button class="btn btn-sm" @onclick="() => SetPageAsync(totalPages)" disabled="@(isLoading || currentPage == totalPages)">Last &gt;&gt;</button>
+        @if (isLoading)
+        {
+            <text>
+                <div class="spinner-border spinner-border-sm text-info ml-1" role="status"></div> Cargando...</text>
+        }
+    </p>
+}
+
+<table class="table table-responsive-sm table-striped">
+    <thead>
+        <tr>
+            @foreach (var column in columns)
+            {
+                <th>
+                    @if (!string.IsNullOrWhiteSpace(column.SortField))
+                    {
+                        <a href="#" @onclick="() => SetSortAsync(column.SortField)" @onclick:preventDefault>
+                            @column.Title
+                        </a>
+                    }
+                    else
+                    {
+                        @column.Title
+                    }
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (items.Any())
+        {
+            @foreach (var item in items)
+            {
+                <tr>
+                    @foreach (var column in columns)
+                    {
+                        <td>
+                            @column.ChildContent(item)
+                        </td>
+                    }
+                </tr>
+            }
+        }
+        else
+        {
+            <tr><td colspan="@columns.Count" class="text-center"><span class="oi oi-ban"></span> No data</td></tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    List<Column<ItemType>> columns = new List<Column<ItemType>>();
+    IReadOnlyList<ItemType> items = new List<ItemType>();
+    bool isLoading = false;
+    int totalPages = 0, totalItems = 0;
+    string sortColumn;
+    bool sortAscending = true;
+    int currentPage = 1;
+
+
+    public void AddColumn(Column<ItemType> column)
+    {
+        columns.Add(column);
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ReloadAsync();
+    }
+
+    async Task SetPageAsync(int newPage)
+    {
+        currentPage = newPage;
+        await ReloadAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await ReloadAsync();
+    }
+
+    async Task SetSortAsync(string field)
+    {
+        currentPage = 1;
+        if (sortColumn == field)
+        {
+            sortAscending = !sortAscending;
+        }
+        else
+        {
+            sortAscending = true;
+            sortColumn = field;
+        }
+        await ReloadAsync();
+    }
+
+    async Task ReloadAsync()
+    {
+        isLoading = true;
+        totalItems = await CountItemsMethod();
+        totalPages = (int)Math.Ceiling((double)totalItems / PageSize);
+        items = await GetItemsMethod(currentPage, PageSize, sortColumn, sortAscending);
+        isLoading = false;
+    }
+
+    [Parameter] public int PageSize { get; set; }
+    [Parameter] public Func<int, int, string, bool, Task<IReadOnlyList<ItemType>>> GetItemsMethod { get; set; }
+    [Parameter] public Func<Task<int>> CountItemsMethod { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}

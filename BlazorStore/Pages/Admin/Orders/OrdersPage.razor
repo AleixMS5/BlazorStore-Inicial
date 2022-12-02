@@ -1,0 +1,97 @@
+﻿@page "/admin/orders"
+@inject IOrderServices OrderServices
+<h3 class="featured-title">Pedidos</h3>
+<div class="text-center my-3">
+    <select @bind="month">
+        <option value="1">January</option>
+        <option value="2">February</option>
+        <option value="3">March</option>
+        <option value="4">April</option>
+        <option value="5">May</option>
+        <option value="6">June</option>
+        <option value="7">July</option>
+        <option value="8">August</option>
+        <option value="9">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+    </select>
+    <select @bind="year">
+        @for (int y = DateTime.Now.Year - 3; y <= DateTime.Now.Year; y++)
+        {
+                <option>@y</option>
+        }
+    </select>
+</div>
+<Grid GetItemsMethod="LoadOrdersAsync" CountItemsMethod="CountOrdersAsync" PageSize="80">
+    <Column ItemType="ExistingOrderDto" Title="Id" SortField="id">
+        @context.Id
+    </Column>
+    <Column ItemType="ExistingOrderDto" Title="Fecha" SortField="date">
+        @context.Date.ToShortDateString()
+    </Column>
+    <Column ItemType="ExistingOrderDto" Title="Nombre" SortField="name">
+        @context.Name
+    </Column>
+    <Column ItemType="ExistingOrderDto" Title="Total" SortField="amount">
+        @context.Amount.ToString("#,##0.#0")
+    </Column>
+    <Column ItemType="ExistingOrderDto" Title="Productos">
+        @context.Lines.Sum(p=>p.Quantity)
+    </Column>
+    <Column ItemType="ExistingOrderDto" Title="Estado">
+        @if (context.Status == "Delivered" && context.DeliveryDate.HasValue)
+        {
+            <div>Delivered on @context.DeliveryDate.Value.ToShortDateString()</div>
+        }
+        else
+        {
+           <select @onchange="@(async (arg) => await SetOrderStatusAsync(context.Id, arg.Value))">
+                @AddOption(OrderStatus.Submitted, context.Status)
+                @AddOption(OrderStatus.Processing, context.Status)
+                @AddOption(OrderStatus.OnTheWay, context.Status)
+                @AddOption(OrderStatus.Delivered, context.Status)
+            </select>
+        }
+    </Column>
+    <Column ItemType="ExistingOrderDto" Title="">
+        <button class="btn btn-link" @onclick="async()=>await ViewDetailsAsync(context)">View details</button>
+    </Column>
+    <Modal Id="orderdetails" Title="Order details" @ref="modal">
+        <OrderDetails Order="@currentOrder"></OrderDetails>
+    </Modal>
+</Grid>
+@code {
+    Modal modal =new Modal();
+    private int month = DateTime.Now.Month;
+    private int year = DateTime.Now.Year;
+    ExistingOrderDto currentOrder;
+    
+
+    Task<IReadOnlyList<ExistingOrderDto>> LoadOrdersAsync(int page, int pageSize, string sortField, bool sortAscending)
+    {
+        return  OrderServices.GetOrderPageAsync(year, month, page, pageSize, sortField, sortAscending);
+    }
+
+    async Task<int> CountOrdersAsync()
+    {
+        return await OrderServices.CountOrdersAsync(year, month);
+    }
+
+    RenderFragment AddOption(OrderStatus item, string current) => @<option value="@((int)item)" selected="@(item.ToString() == current)">@item.ToString()</option>;
+
+    async Task SetOrderStatusAsync(int orderId, object value)
+    {
+        var statusId = Convert.ToInt32(value);
+        await OrderServices.SetOrderStatusAsync(orderId, statusId);
+    }
+
+    async Task ViewDetailsAsync(ExistingOrderDto order)
+    {
+        currentOrder = order;
+     
+            await modal.ShowAsync();
+       
+
+    }
+}

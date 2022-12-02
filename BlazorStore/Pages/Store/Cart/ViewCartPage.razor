@@ -52,9 +52,18 @@ else
 
 @if (cartItems!=null && cartItems.Any())
 {
-    <div class="text-center">
-        <a class="btn btn-lg btn-secondary" href="checkout">Checkout</a>
-    </div>
+    <AuthorizeView>
+            <Authorized>
+                <div class="text-center">
+                    <a class="btn btn-lg btn-secondary" href="checkout">Checkout</a>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="text-center">
+                    <a class="btn btn-lg btn-secondary" href="/login">Checkout</a>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
 }
 
 @code {

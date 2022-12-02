@@ -14,7 +14,9 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddBlazorStoreModelServices(this IServiceCollection services)
         {
-            services.AddDbContext<BlazorStoreContext>();
+            _ = services.AddTransient<BlazorStoreContext>();
+           
+            //services.AddDbContext<BlazorStoreContext>();
             services.AddScoped<ICategoryServices, CategoryServices>();
             services.AddScoped<IProductServices, ProductServices>();
             services.AddScoped<ICatalogServices, CatalogServices>();
