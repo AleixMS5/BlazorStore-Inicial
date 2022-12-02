@@ -12,21 +12,27 @@ namespace BlazorStore.Model.Services.Categories
 {
     public class CategoryServices: ICategoryServices
     {
-        private readonly BlazorStoreContext _context;
+        private readonly DbContextOptions<BlazorStoreContext> dbo;
         private readonly IMapper _mapper;
 
-        public CategoryServices(BlazorStoreContext context, IMapper mapper)
+        public CategoryServices(DbContextOptions<BlazorStoreContext> odb, IMapper mapper)
         {
-            this._context = context;
+            dbo = odb;
+            
             _mapper = mapper;
         }
 
+        public DbContextOptions<BlazorStoreContext> Dbo => dbo;
+
         public async Task<IReadOnlyList<CategoryDto>> GetAllAsync()
         {
-            var result = await _context.Categories
+            using (var db = new BlazorStoreContext(Dbo))
+            {
+                var result = await db.Categories
                 .ProjectTo<CategoryDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
-            return result;
+                return result;
+            }
         }
     }
 }

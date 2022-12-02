@@ -21,13 +21,13 @@ namespace BlazorStore.Model.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
-            builder.UseSqlServer("Server=.\\SQLEXPRESS;Database=DisiBlazorStore;Integrated Security=True;Encrypt=False;TrustServerCertificate=False;MultipleActiveResultSets=True", opt =>
+            builder.UseSqlServer("Server=.\\SQLEXPRESS;Database=DisiBlazorStore;Integrated Security=True;Encrypt=False;TrustServerCertificate=False;", opt =>
             {
                 opt.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName);
             });
             base.OnConfiguring(builder);
         }
-
+        /*MultipleActiveResultSets=True*/
         protected override void OnModelCreating(ModelBuilder model)
         {
             model.Entity<Product>()
