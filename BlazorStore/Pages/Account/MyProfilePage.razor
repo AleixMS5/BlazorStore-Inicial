@@ -9,39 +9,41 @@
     <div class="col-12 px-5 col-lg-8 offset-lg-2 profile-wrap">
         <h4>Identification</h4>
         <div class="form-group">
-            <label>Name:</label>
+            <label>Nombre:</label>
             <input class="form-control disabled" disabled value="@user.Name" />
         </div>
         <div class="form-group">
             <label>Email:</label>
             <input class="form-control disabled" disabled value="@user.Email" />
         </div>
-        <h4>Default shipping address</h4>
+        <h4>
+            Dirección de entrega por defecto
+        </h4>
         <div class="form-group">
-            <label>Address:</label>
+            <label>Dirección:</label>
             <input class="form-control disabled" disabled value="@user.Address" />
         </div>
         <div class="form-group">
-            <label>City:</label>
+            <label>Ciudad:</label>
             <input class="form-control disabled" disabled value="@user.City" />
         </div>
         <div class="form-group">
-            <label>Zip code:</label>
+            <label>Código postal:</label>
             <input class="form-control disabled" disabled value="@user.ZipCode" />
         </div>
         <div class="form-group">
-            <label>State/Province:</label>
+            <label>Estado/Provincia:</label>
             <input class="form-control disabled" disabled value="@user.State" />
         </div>
         <div class="form-group">
-            <label>Country:</label>
+            <label>País:</label>
             <input class="form-control disabled" disabled value="@user.Country" />
         </div>
     </div>
 }
 else
 {
-    <div class="text-center"><span class="spinner-border"></span> Loading...</div>
+    <div class="text-center"><span class="spinner-border"></span> Cargando...</div>
 }
 
 @code {

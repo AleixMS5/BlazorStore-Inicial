@@ -1,0 +1,46 @@
+﻿@page "/admin/products/remove/{productId:int}"
+@using BlazorStore.Services.Images
+@inject NavigationManager NavigationManager
+@inject IProductServices ProductServices
+@inject IImageStorage ImageStorage
+
+@if (notFound)
+{
+    <h3>Producto no encontrado</h3>
+    <button class="btn btn-warning" @onclick="HandleCancel">Back</button>
+}
+else
+{
+    <h3 class="text-danger">Confirmar borrado</h3>
+    <ProductEditor IsRemoving="true" Product="product" ProductChanged="RemoveProduct" OnCancel="HandleCancel"></ProductEditor>
+}
+
+@code {
+    [Parameter] public int ProductId { get; set; }
+
+    bool notFound = false;
+    ProductViewModel product = new ProductViewModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var existingProduct = await ProductServices.GetByIdAsync(ProductId);
+        if (existingProduct == null)
+        {
+            notFound = true;
+            return;
+        }
+        product = ProductViewModel.FromProductDto(existingProduct);
+    }
+
+    async Task RemoveProduct(ProductViewModel productToRemove)
+    {
+        await ProductServices.RemoveAsync(ProductId);
+        await ImageStorage.RemoveImageAsync(productToRemove.Image);
+        NavigationManager.NavigateTo("admin/products");
+    }
+
+    void HandleCancel()
+    {
+        NavigationManager.NavigateTo("admin/products");
+    }
+}

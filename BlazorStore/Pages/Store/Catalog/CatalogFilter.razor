@@ -1,7 +1,7 @@
 ﻿@using BlazorStore.Model.Services.Catalog
 @inject ICategoryServices CategoryServices
 <div class="filter-section">
-    <h3>Search</h3>
+    <h3>buscar</h3>
     <ul>
         <li>
             <input type="text" @bind="Criteria.Term" @bind:event="oninput" @onchange="SearchTermChanged" />
@@ -11,7 +11,7 @@
 <div class="filter-section">
     <h3>Categories</h3>
     <ul>
-        <li><a class="@(Criteria.CategoryId==null? "selected": string.Empty)" href="" @onclick="()=>SetCategory(null)" @onclick:preventDefault>All categories</a></li>
+        <li><a class="@(Criteria.CategoryId==null? "selected": string.Empty)" href="" @onclick="()=>SetCategory(null)" @onclick:preventDefault>Todas las categorias</a></li>
         @if (categories!=null){
         @foreach (var category in categories)
         {
@@ -31,13 +31,13 @@
     <h3>Order by @Criteria.Sort.AsString()</h3>
     <ul>
         <li>
-            <label><input type="radio" name="order" value="PriceAsc" checked="@(Criteria.Sort==CatalogSort.PriceAsc)" @onchange="@((_)=>UpdateSort(CatalogSort.PriceAsc))" /> Price (asc)</label>
+            <label><input type="radio" name="order" value="PriceAsc" checked="@(Criteria.Sort==CatalogSort.PriceAsc)" @onchange="@((_)=>UpdateSort(CatalogSort.PriceAsc))" /> Precio (asc)</label>
         </li>
         <li>
-            <label><input type="radio" name="order" value="PriceDesc" checked="@(Criteria.Sort==CatalogSort.PriceDesc)" @onchange="@((_)=>UpdateSort(CatalogSort.PriceDesc))" /> Price (desc)</label>
+            <label><input type="radio" name="order" value="PriceDesc" checked="@(Criteria.Sort==CatalogSort.PriceDesc)" @onchange="@((_)=>UpdateSort(CatalogSort.PriceDesc))" /> Precio (desc)</label>
         </li>
         <li>
-            <label><input type="radio" name="order" value="DiscountDesc" checked="@(Criteria.Sort==CatalogSort.DiscountDesc)" @onchange="@((_)=>UpdateSort(CatalogSort.DiscountDesc))" /> Discount</label>
+            <label><input type="radio" name="order" value="DiscountDesc" checked="@(Criteria.Sort==CatalogSort.DiscountDesc)" @onchange="@((_)=>UpdateSort(CatalogSort.DiscountDesc))" /> Descuento</label>
         </li>
     </ul>
 </div>

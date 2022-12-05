@@ -15,101 +15,132 @@ namespace BlazorStore.Model.Services.Users
 {
     public class UserServices : IUserServices
     {
-        private readonly BlazorStoreContext _ctx;
+        private readonly DbContextOptions<BlazorStoreContext> dbo;
         private readonly IMapper _mapper;
 
-        public UserServices(BlazorStoreContext ctx, IMapper mapper)
+        public UserServices(DbContextOptions<BlazorStoreContext> odb, IMapper mapper)
         {
-            _ctx = ctx;
+            dbo = odb;
             _mapper = mapper;
         }
 
         public async Task<UserDto> GetUserByIdAsync(int id)
         {
-            var user = await _ctx.Users
+            using (var db = new BlazorStoreContext(dbo))
+            {
+                var user = await db.Users
                 .Where(u => u.Id == id)
                 .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync();
-            return user;
+                .FirstOrDefaultAsync()??new UserDto();
+                return user;
+                //var user = await db.Users.FirstOrDefaultAsync(u => u.Id == id) ?.ToList().Select(u => new UserDto()
+                //{
+                //    Id = id,
+                //    Name = u.Name,
+                //   Address= u.Address,
+                //   IsAdmin= u.IsAdmin,
+                //   City= u.City,
+
+                //});
+                //return user;
+            }
         }
 
         public async Task<bool> EmailExistsAsync(string email)
         {
-            var result = await _ctx.Users.AnyAsync(u => u.Email == email);
-            return result;
+            using (var db = new BlazorStoreContext(dbo))
+            {
+                var result = await db.Users.AnyAsync(u => u.Email == email);
+                return result;
+            }
         }
 
         public async Task<UserDto> GetUserByCredentialsAsync(string email, string password)
         {
-            var passwordHash = ComputeSha256Hash(password);
-            var user = await _ctx.Users
-                .Where(u => u.Email == email && u.PasswordHash == passwordHash)
-                .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync();
-            return user;
+            using (var db = new BlazorStoreContext(dbo))
+            {
+                var passwordHash = ComputeSha256Hash(password);
+                var user = await db.Users
+                    .Where(u => u.Email == email && u.PasswordHash == passwordHash)
+                    .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+                    .FirstOrDefaultAsync();
+                return user;
+            }
         }
 
         public async Task CreateUserAsync(NewUserDto newUserDto)
         {
-            var newUser = _mapper.Map<User>(newUserDto);
-            newUser.CreationDate = DateTime.Now;
-            newUser.PasswordHash = ComputeSha256Hash(newUserDto.Password);
-            _ctx.Users.Add(newUser);
-            await _ctx.SaveChangesAsync();
+            using (var db = new BlazorStoreContext(dbo))
+            {
+                var newUser = _mapper.Map<User>(newUserDto);
+                newUser.CreationDate = DateTime.Now;
+                newUser.PasswordHash = ComputeSha256Hash(newUserDto.Password);
+                db.Users.Add(newUser);
+                await db.SaveChangesAsync();
+            }
         }
 
         public async Task<IReadOnlyList<UserDto>> GetUserPageAsync(int page, int pageSize, string sortField, bool sortAscending)
         {
-            IQueryable<User> query = _ctx.Users;
-
-            Expression<Func<User, object>> sortExpression;
-
-            switch (sortField?.ToLowerInvariant())
+            using (var db = new BlazorStoreContext(dbo))
             {
-                case "name":
-                    sortExpression = p => p.Name;
-                    break;
-                case "email":
-                    sortExpression = p => p.Email;
-                    break;
-                case "profile":
-                    sortExpression = p => p.IsAdmin;
-                    break;
-                case "date":
-                    sortExpression = p => p.CreationDate;
-                    break;
-                default:
-                    sortExpression = p => p.Id;
-                    break;
+                IQueryable<User> query = db.Users;
+
+                Expression<Func<User, object>> sortExpression;
+
+                switch (sortField?.ToLowerInvariant())
+                {
+                    case "name":
+                        sortExpression = p => p.Name;
+                        break;
+                    case "email":
+                        sortExpression = p => p.Email;
+                        break;
+                    case "profile":
+                        sortExpression = p => p.IsAdmin;
+                        break;
+                    case "date":
+                        sortExpression = p => p.CreationDate;
+                        break;
+                    default:
+                        sortExpression = p => p.Id;
+                        break;
+                }
+
+                query = sortAscending ? query.OrderBy(sortExpression) : query.OrderByDescending(sortExpression);
+
+                var result = await query
+                    .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                return result;
             }
-
-            query = sortAscending ? query.OrderBy(sortExpression) : query.OrderByDescending(sortExpression);
-
-            var result = await query
-                .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            return result;
         }
 
         public async Task<int> CountUsersAsync()
         {
-            var result = await _ctx.Users.CountAsync();
-            return result;
+            using (var db = new BlazorStoreContext(dbo))
+            {
+                var result = await db.Users.CountAsync();
+                return result;
+            }
         }
 
         public async Task<bool> SetRoleAsync(int id, bool isAdmin)
         {
-            var user = await _ctx.Users.FirstOrDefaultAsync(u => u.Id == id);
-            if (user != null)
+            using (var db = new BlazorStoreContext(dbo))
             {
-                user.IsAdmin = isAdmin;
-                return await _ctx.SaveChangesAsync() == 1;
-            }
+                var user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+                if (user != null)
+                {
+                    user.IsAdmin = isAdmin;
+                    return await db.SaveChangesAsync() == 1;
+                }
 
-            return false;
+                return false;
+            }
         }
 
         private static string ComputeSha256Hash(string str)

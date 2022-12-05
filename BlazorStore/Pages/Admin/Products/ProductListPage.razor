@@ -1,0 +1,53 @@
+﻿@page "/admin/products"
+@inject IProductServices ProductServices
+<h3 class="featured-title">Products</h3>
+
+<div id="admin-products-wrap">
+    <a class="btn btn-secondary float-right" href="admin/products/create">Add new product</a>
+    <Grid GetItemsMethod="LoadProductsAsync" CountItemsMethod="CountProductsAsync" PageSize="80">
+        <Column ItemType="ProductDto" Title="Id" SortField="id">
+            @context.Id
+        </Column>
+        <Column ItemType="ProductDto" Title="" SortField="">
+            <img class="thumbnail" src="/images/@context.Image" alt="@context.Name" />
+        </Column>
+        <Column ItemType="ProductDto" Title="Nombre" SortField="name">
+            <a href="admin/products/@context.Id">@context.Name</a>
+        </Column>
+        <Column ItemType="ProductDto" Title="Precio" SortField="price">
+            @if (context.PrevPrice != context.Price)
+            {
+                <span style="text-decoration: line-through" class="text-danger">
+                    @context.PrevPrice.ToString("#,##0.#0")
+                </span>
+            }
+            @context.Price.ToString("#,##0.#0")
+        </Column>
+        <Column ItemType="ProductDto" Title="<Destacado?">
+            @if (context.IsHighlighted)
+            {
+                <div class="text-success font-weight-bold">✓</div>
+            }
+        </Column>
+        <Column ItemType="ProductDto">
+            <a class="btn btn-danger" href="admin/products/remove/@context.Id">Remove</a>
+        </Column>
+    </Grid>
+</div>
+
+@code {
+    Task<IReadOnlyList<ProductDto>> LoadProductsAsync(int page, int pageSize, string sortField, bool sortAscending)
+    {
+        if (sortField == null)
+        {
+            sortField = "LastUpdated";
+            sortAscending = false;
+        }
+        return ProductServices.GetProductPageAsync(page, pageSize, sortField, sortAscending);
+    }
+
+    async Task<int> CountProductsAsync()
+    {
+        return await ProductServices.GetProductsCountAsync();
+    }
+}

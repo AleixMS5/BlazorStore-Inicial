@@ -3,17 +3,17 @@
 <button @onclick="AddToCart" class="@(@class) addtocart-btn-@addStatus.ToString().ToLower()" @onclick:stopPropagation disabled="@(addStatus!=AddStatus.None)">
     @if (addStatus == AddStatus.Added)
     {
-        @:Added!
+        @:Añadido!
     }
     else
     {
         if (addStatus == AddStatus.Adding)
         {
-            @:<span class="spinner-border spinner-border-sm text-white"></span> Adding...
+            @:<span class="spinner-border spinner-border-sm text-white"></span> Añadiendo...
         }
         else
         {
-            @:Add to Cart
+            @:Añadir al carrito
         }
     }
 </button>

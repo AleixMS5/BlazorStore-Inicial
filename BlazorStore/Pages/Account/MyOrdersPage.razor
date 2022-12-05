@@ -15,11 +15,11 @@
                         <h5 class="mb-0">
                             <span class="order-date">@order.Date.ToShortDateString() @order.Date.ToShortTimeString()</span>
                             <a href="#" data-toggle="collapse" data-target="#collapse@(order.Id)" aria-expanded="true" aria-controls="order@(order.Id)">
-                                Order #@order.Id, Status: <strong>@order.Status</strong>.
+                                Pedido #@order.Id, Status: <strong>@order.Status</strong>.
                             </a>
                             @if (order.DeliveryDate != null)
                             {
-                                <div class="small text-muted mt-2">Delivered at: @order.DeliveryDate.Value.ToShortDateString() @order.DeliveryDate.Value.ToShortTimeString()</div>
+                                <div class="small text-muted mt-2">Entregado el: @order.DeliveryDate.Value.ToShortDateString() @order.DeliveryDate.Value.ToShortTimeString()</div>
                             }
                         </h5>
                     </div>
@@ -30,8 +30,8 @@
                                 <thead>
                                 <tr>
                                     <th>Product</th>
-                                    <th class="text-center">Quantity</th>
-                                    <th class="text-center">Unit price</th>
+                                        <th class="text-center">Cantidad</th>
+                                        <th class="text-center">Precio unitario</th>
                                     <th class="text-center">Total</th>
                                 </tr>
                                 </thead>
@@ -66,11 +66,16 @@
 }
 else if (orders == null)
 {
-    <div class="text-center"><span class="spinner-border"></span> Loading...</div>
+    <div class="text-center">
+        <span class="spinner-border"></span>
+        Cargando...
+    </div>
 }
 else
 {
-    <div class="text-center">No orders found.</div>
+    <div class="text-center">
+        No se encontraron pedidos.
+    </div>
 }
 
 @code {

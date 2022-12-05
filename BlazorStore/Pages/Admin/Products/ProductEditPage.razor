@@ -1,0 +1,45 @@
+﻿@page "/admin/products/{productId:int}"
+@inject NavigationManager NavigationManager
+@inject IProductServices ProductServices
+
+@if (notFound)
+{
+    <h3>Producto no encontrado</h3>
+    <button class="btn btn-warning" @onclick="HandleCancel">Back</button>
+}
+else
+{
+    <h3>Editar Producto</h3>
+    <ProductEditor Product="product" ProductChanged="SaveProduct" OnCancel="HandleCancel"></ProductEditor>
+}
+
+@code {
+    [Parameter] public int ProductId { get; set; }
+
+    bool notFound = false;
+    ProductViewModel product = new ProductViewModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var existingProduct = await ProductServices.GetByIdAsync(ProductId);
+        if (existingProduct == null)
+        {
+            notFound = true;
+            return;
+        }
+        product = ProductViewModel.FromProductDto(existingProduct);
+    }
+
+    async Task SaveProduct(ProductViewModel newProductViewModel)
+    {
+        var prod = newProductViewModel.ToProductDto();
+        prod.Id = ProductId;
+        await ProductServices.UpdateAsync(prod);
+        NavigationManager.NavigateTo($"admin/products");
+    }
+
+    void HandleCancel()
+    {
+        NavigationManager.NavigateTo($"admin/products");
+    }
+}

@@ -1,0 +1,22 @@
+﻿@page "/admin/products/create"
+@inject NavigationManager NavigationManager
+@inject IProductServices ProductServices
+
+<h3>Crear un producto </h3>
+
+<ProductEditor Product="product" ProductChanged="SaveProduct" OnCancel="HandleCancel"></ProductEditor>
+
+@code {
+    ProductViewModel product = new ProductViewModel();
+
+    async Task SaveProduct(ProductViewModel newProductViewModel)
+    {
+        await ProductServices.CreateAsync(newProductViewModel.ToProductDto());
+        NavigationManager.NavigateTo("admin/products");
+    }
+
+    void HandleCancel()
+    {
+        NavigationManager.NavigateTo("admin/products");
+    }
+}

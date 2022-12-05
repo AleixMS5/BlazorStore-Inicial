@@ -16,6 +16,12 @@
   <ItemGroup>
     <None Include="Components\Grid\Grid.razor" />
     <None Include="Components\Modal\Modal.razor" />
+    <None Include="Pages\Admin\Products\ProductCreatePage.razor" />
+    <None Include="Pages\Admin\Products\ProductEditor.razor" />
+    <None Include="Pages\Admin\Products\ProductEditPage.razor" />
+    <None Include="Pages\Admin\Products\ProductListPage.razor" />
+    <None Include="Pages\Admin\Products\ProductRemovePage.razor" />
+    <None Include="Pages\Admin\Users\UsersPage.razor" />
     <None Include="Pages\Store\Checkout\CheckoutPage.razor" />
     <None Include="Pages\Store\Checkout\ThankYouPage.razor" />
   </ItemGroup>

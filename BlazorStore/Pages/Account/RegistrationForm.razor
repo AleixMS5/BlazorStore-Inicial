@@ -7,49 +7,49 @@
 <EditForm Model="this" OnValidSubmit="CreateAccount">
     <DataAnnotationsValidator></DataAnnotationsValidator>
     <fieldset>
-        <legend>Credentials</legend>
+        <legend>Credenciales</legend>
 
         <div class="form-group">
             <label for="email">Email:</label> <ValidationMessage For="() => Email" />
             @if (emailExists)
             {
-                <span class="text-danger">This email already exists</span>
+                <span class="text-danger">Este email ya existe</span>
             }
             <InputText class="form-control col-12" id="email" maxlength="@FieldLenghts.User.Email" @bind-Value="Email" @oninput="OnEmailChanged" autocomplete="___"></InputText>
         </div>
         <div class="form-group">
-            <label for="password">Password:</label> <ValidationMessage For="() => Password" />
+            <label for="password">Contraseña:</label> <ValidationMessage For="() => Password" />
             <InputText type="password" class="form-control col-12" id="password" @bind-Value="Password" autocomplete="new-password"></InputText>
         </div>
         <div class="form-group">
-            <label for="repeatpassword">Repeat password:</label> <ValidationMessage For="() => RepeatPassword" />
+            <label for="repeatpassword">Repetir Contreseña:</label> <ValidationMessage For="() => RepeatPassword" />
             <InputText type="password" class="form-control col-12" id="repeatpassword" @bind-Value="RepeatPassword" autocomplete="new-password"></InputText>
         </div>
     </fieldset>
     <fieldset>
         <legend>User information</legend>
         <div class="form-group">
-            <label for="name">Name:</label> <ValidationMessage For="() => Name" />
+            <label for="name">Nombre:</label> <ValidationMessage For="() => Name" />
             <InputText class="form-control col-12" id="name" @bind-Value="Name" maxlength="@FieldLenghts.User.Name"></InputText>
         </div>
         <div class="form-group">
-            <label for="address">Address:</label> <ValidationMessage For="() => Address"></ValidationMessage>
+            <label for="address">Dirección:</label> <ValidationMessage For="() => Address"></ValidationMessage>
             <InputText class="form-control col-12" id="address" @bind-Value="Address" maxlength="@FieldLenghts.User.Address"></InputText>
         </div>
         <div class="form-group">
-            <label for="city">City:</label> <ValidationMessage For="() => City"></ValidationMessage>
+            <label for="city">Ciudad:</label> <ValidationMessage For="() => City"></ValidationMessage>
             <InputText class="form-control col-12" id="city" @bind-Value="City" maxlength="@FieldLenghts.User.City"></InputText>
         </div>
         <div class="form-group">
-            <label for="address">Zip Code:</label> <ValidationMessage For="()=>ZipCode"></ValidationMessage>
+            <label for="address">Codigo Postal:</label> <ValidationMessage For="()=>ZipCode"></ValidationMessage>
             <InputText class="form-control col-3" id="zipcode" @bind-Value="ZipCode" maxlength="@FieldLenghts.User.ZipCode"></InputText>
         </div>
         <div class="form-group">
-            <label for="country">State/Province:</label> <ValidationMessage For="()=>State"></ValidationMessage>
+            <label for="country">Estado/Provincia:</label> <ValidationMessage For="()=>State"></ValidationMessage>
             <InputText class="form-control col-12" id="state" @bind-Value="State" maxlength="@FieldLenghts.User.State"></InputText>
         </div>
         <div class="form-group">
-            <label for="country">Country:</label> <ValidationMessage For="()=>Country"></ValidationMessage>
+            <label for="country">Pais:</label> <ValidationMessage For="()=>Country"></ValidationMessage>
             <InputText class="form-control col-12" id="country" @bind-Value="Country" maxlength="@FieldLenghts.User.Country"></InputText>
         </div>
     </fieldset>

@@ -14,90 +14,108 @@ namespace BlazorStore.Model.Services.Products
 {
     public class ProductServices : IProductServices
     {
-        private readonly BlazorStoreContext _context;
+        private readonly DbContextOptions<BlazorStoreContext> dbo;
         private readonly IMapper _mapper;
 
-        public ProductServices(BlazorStoreContext context, IMapper mapper)
+        public ProductServices(DbContextOptions<BlazorStoreContext> odb, IMapper mapper)
         {
-            _context = context;
+            dbo = odb;
             _mapper = mapper;
         }
 
         public async Task<ProductDto> GetByIdAsync(int id)
         {
-            var product = await _context.Products
+            using (var db = new BlazorStoreContext(dbo))
+            {
+                var product = await db.Products
                 .Where(p => p.Id == id)
                 .ProjectTo<ProductDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync();
-            return product;
+                return product;
+            }
         }
 
         public async Task<int> GetProductsCountAsync()
         {
-            return await _context.Products.CountAsync();
+            using (var db = new BlazorStoreContext(dbo))
+            {
+                return await db.Products.CountAsync();
+            }
         }
 
         public async Task<bool> RemoveAsync(int productId)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == productId);
-            if (product != null)
+            using (var db = new BlazorStoreContext(dbo))
             {
-                _context.Products.Remove(product);
-                await _context.SaveChangesAsync();
-                return true;
-            }
+                var product = await db.Products.FirstOrDefaultAsync(p => p.Id == productId);
+                if (product != null)
+                {
+                    db.Products.Remove(product);
+                    await db.SaveChangesAsync();
+                    return true;
+                }
 
-            return false;
+                return false;
+            }
         }
 
         public async Task<bool> UpdateAsync(ProductDto productDto)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == productDto.Id);
-            if (product != null)
+            using (var db = new BlazorStoreContext(dbo))
             {
-                _mapper.Map(productDto, product);
-                return await _context.SaveChangesAsync() == 1;
+                var product = await db.Products.FirstOrDefaultAsync(p => p.Id == productDto.Id);
+                if (product != null)
+                {
+                    _mapper.Map(productDto, product);
+                    return await db.SaveChangesAsync() == 1;
+                }
+                return false;
             }
-            return false;
         }
 
         public async Task CreateAsync(ProductDto productDto)
         {
-            var product = _mapper.Map<Product>(productDto);
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
+            using (var db = new BlazorStoreContext(dbo))
+            {
+                var product = _mapper.Map<Product>(productDto);
+                db.Products.Add(product);
+                await db.SaveChangesAsync();
+            }
         }
 
         public async Task<IReadOnlyList<ProductDto>> GetProductPageAsync(int page, int pageSize, string sortField, bool sortAscending)
         {
-            IQueryable<Product> query = _context.Products;
-
-            Expression<Func<Product, object>> sortExpression;
-
-            switch (sortField?.ToLowerInvariant())
+            using (var db = new BlazorStoreContext(dbo))
             {
-                case "name":
-                    sortExpression = p => p.Name;
-                    break;
-                case "lastUpdated":
-                    sortExpression = p => p.LastUpdated;
-                    break;
-                case "price":
-                    sortExpression = p => p.Price;
-                    break;
-                default:
-                    sortExpression = p => p.Id;
-                    break;
+                IQueryable<Product> query = db.Products;
+
+                Expression<Func<Product, object>> sortExpression;
+
+                switch (sortField?.ToLowerInvariant())
+                {
+                    case "name":
+                        sortExpression = p => p.Name;
+                        break;
+                    case "lastUpdated":
+                        sortExpression = p => p.LastUpdated;
+                        break;
+                    case "price":
+                        sortExpression = p => p.Price;
+                        break;
+                    default:
+                        sortExpression = p => p.Id;
+                        break;
+                }
+
+                query = sortAscending ? query.OrderBy(sortExpression) : query.OrderByDescending(sortExpression);
+
+                var result = await query
+                    .ProjectTo<ProductDto>(_mapper.ConfigurationProvider)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+                return result;
             }
-
-            query = sortAscending ? query.OrderBy(sortExpression) : query.OrderByDescending(sortExpression);
-
-            var result = await query
-                .ProjectTo<ProductDto>(_mapper.ConfigurationProvider)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-            return result;
         }
     }
 

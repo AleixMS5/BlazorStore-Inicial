@@ -1,0 +1,57 @@
+﻿@page "/admin/users"
+@using BlazorStore.Model.Services.Users
+@inject IUserServices UserServices
+<h3 class="featured-title">Users</h3>
+
+<Grid GetItemsMethod="LoadUsersAsync" CountItemsMethod="CountUsersAsync" PageSize="80">
+    <Column ItemType="UserDto" Title="Email" SortField="email">
+        @context.Email
+    </Column>
+    <Column ItemType="UserDto" Title="Nombre" SortField="name">
+        @context.Name
+    </Column>
+    <Column ItemType="UserDto" Title="Perfil" SortField="profile">
+        @if (context.IsAdmin)
+        {
+
+            <div><span class="text-success font-weight-bold">👑 Administrador</span></div>
+        }
+        else
+        {
+            <div><span>👨 Cliente</span></div>
+        }
+    </Column>
+    <Column ItemType="UserDto" Title="Registrado el">
+        @context.CreationDate.ToShortDateString()
+    </Column>
+    <Column ItemType="UserDto" Title="">
+        @if (context.IsAdmin)
+        {
+            <button class="btn btn-warning" @onclick="@(async () => await SetRoleAsync(context.Id, isAdmin: false))">↓ Downgrade to customer</button>
+        }
+        else
+        {
+            <button class="btn btn-danger" @onclick="@(async () => await SetRoleAsync(context.Id, isAdmin: true))">↑ Upgrade to admin</button>
+        }
+    </Column>
+</Grid>
+
+@code {
+    Task<IReadOnlyList<UserDto>> LoadUsersAsync(int page, int pageSize, string sortField, bool sortAscending)
+    {
+        return UserServices.GetUserPageAsync(page, pageSize, sortField, sortAscending);
+    }
+
+    async Task<int> CountUsersAsync()
+    {
+        return await UserServices.CountUsersAsync();
+    }
+
+    private async Task SetRoleAsync(int id, bool isAdmin)
+    {
+        await UserServices.SetRoleAsync(id, isAdmin);
+        StateHasChanged();
+    }
+
+}
+

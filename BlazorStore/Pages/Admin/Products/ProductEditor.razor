@@ -1,0 +1,131 @@
+﻿@using BlazorStore.Services.Images
+@inject IImageStorage ImageStorage
+@inject ICategoryServices Categories
+
+<div id="product-editor-wrap">
+    <EditForm Model="Product" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <label for="name">Nombre:</label><ValidationMessage For="()=>Product.Name" />
+                    <InputText @bind-Value="Product.Name" class="form-control" id="name" disabled="@IsRemoving" />
+                </div>
+                <div class="form-group">
+                    <label for="description">Descripción:</label><ValidationMessage For="()=>Product.Description" />
+                    <InputTextArea @bind-Value="Product.Description" class="form-control" id="description" disabled="@IsRemoving" rows="5" />
+                </div>
+                <div class="form-group">
+                    <label for="price">Precio:</label><ValidationMessage For="()=>Product.Price" />
+                    <InputNumber @bind-Value="Product.Price" class="form-control col-8 col-sm-6 col-md-2" id="price" disabled="@IsRemoving" @onblur="AutoFillPrevPrice" />
+                </div>
+                <div class="form-group">
+                    <label for="prevprice">Precio anterior</label><ValidationMessage For="()=>Product.PrevPrice" />
+                    <InputNumber @bind-Value="Product.PrevPrice" class="form-control col-8 col-sm-6 col-md-2" id="prevprice" disabled="@IsRemoving" />
+                </div>
+                <div class="form-group">
+                    <label for="category">Category:</label><ValidationMessage For="()=>Product.CategoryId" />
+                    <InputSelectNumber @bind-Value="Product.CategoryId" class="form-control" id="category" disabled="@IsRemoving">
+                        <option value="">Selecione una categoria...</option>
+                        @if(categories!= null){    @foreach (var category in categories)
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }}
+                    
+                    </InputSelectNumber>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <InputCheckbox @bind-Value="Product.IsHighlighted" class="form-check-input" id="stockCheck" disabled="@IsRemoving" />
+                        <label class="form-check-label" for="stockCheck">
+                            El producto esta destacado
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <label>Imagen:</label>
+                   
+                        <ValidationMessage For="()=>Product.Image" />
+                    
+                   
+                    <br />
+                    @if (string.IsNullOrEmpty(Product.Image))
+                    {
+                        <div class="input-file-wrap">
+                            <InputFile OnChange="OnFileSelected" accept="image/*"></InputFile>
+                            <p>haz click para selecionar una imagen o arrastrala hasta aqui</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <img src="images/@Product.Image" class="d-block mt-1 mw-100" />
+                        <button type="button" disabled="@IsRemoving" class="btn btn-sm btn-info mt-2"
+                                @onclick="()=>Product.Image=null">
+                            Limpiar
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+        @if (IsRemoving)
+        {
+            <button type="submit" disabled="@isSaving" class="btn btn-lg btn-danger">@(isSaving ? "Removing..." : "Remove")</button>
+            <button type="button" @onclick="Cancel" disabled="@isSaving" class="btn btn-lg btn-light">Cancel</button>
+        }
+        else
+        {
+            <button type="submit" disabled="@isSaving" class="btn btn-lg btn-success">@(isSaving ? "Saving..." : "Save")</button>
+            <button type="button" @onclick="Cancel" disabled="@isSaving" class="btn btn-lg btn-danger">Cancel</button>
+        }
+    </EditForm>
+</div>
+
+@code {
+
+    [Parameter] public ProductViewModel Product { get; set; }
+    [Parameter] public EventCallback<ProductViewModel> ProductChanged { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+    [Parameter] public bool IsRemoving { get; set; } = false;
+
+    bool isSaving;
+    IReadOnlyList<CategoryDto> categories;
+
+    async Task OnValidSubmit()
+    {
+        isSaving = true;
+        await ProductChanged.InvokeAsync(Product);
+    }
+
+    async Task Cancel()
+    {
+        await OnCancel.InvokeAsync(null);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await Categories.GetAllAsync();
+    }
+
+    private async Task OnFileSelected(InputFileChangeEventArgs args)
+    {
+        if (args.FileCount == 0)
+            return;
+
+        var file = args.File;
+        using var stream = file.OpenReadStream();
+        await ImageStorage.SaveImageAsync(file.Name, stream);
+        Product.Image = "uploads/" + file.Name;
+    }
+
+    private void AutoFillPrevPrice()
+    {
+        if (Product.Price > 0 && Product.PrevPrice < Product.Price)
+        {
+            Product.PrevPrice = Product.Price;
+        }
+
+    }
+
+}

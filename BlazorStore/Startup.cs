@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using BlazorStore.Services.Cart;
 using Blazored.SessionStorage;
 using Microsoft.EntityFrameworkCore;
+using BlazorStore.Services.Images;
 
 namespace BlazorStore
 {
@@ -38,6 +39,7 @@ namespace BlazorStore
             // BlazorStore specific services
             services.AddBlazorStoreModelServices();
             services.AddScoped<CurrentCart>();
+            services.AddSingleton<IImageStorage, ImageStorage>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
