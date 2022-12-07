@@ -27,11 +27,11 @@
     <Column ItemType="UserDto" Title="">
         @if (context.IsAdmin)
         {
-            <button class="btn btn-warning" @onclick="@(async () => await SetRoleAsync(context.Id, isAdmin: false))">↓ Downgrade to customer</button>
+            <button class="btn btn-warning" @onclick="@(async () => await SetRoleAsync(context.Id, isAdmin: false))">↓ Bajar de categoría a cliente</button>
         }
         else
         {
-            <button class="btn btn-danger" @onclick="@(async () => await SetRoleAsync(context.Id, isAdmin: true))">↑ Upgrade to admin</button>
+            <button class="btn btn-danger" @onclick="@(async () => await SetRoleAsync(context.Id, isAdmin: true))">↑ Ascender a administrador</button>
         }
     </Column>
 </Grid>

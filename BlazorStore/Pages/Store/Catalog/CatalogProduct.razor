@@ -10,12 +10,12 @@
             if (Product.PrevPrice == Product.Price)
             {
                 <p class="oldprice none">&nbsp;</p>
-                <p class="price">$ @Product.Price.ToString("#,##0.#0")</p>
+                <p class="price">€ @Product.Price.ToString("#,##0.#0")</p>
             }
             else
             {
-                <p class="oldprice">$ @Product.PrevPrice.ToString("#,##0.#0")</p>
-                <p class="price">$ @Product.Price.ToString("#,##0.#0")</p>
+                <p class="oldprice">€ @Product.PrevPrice.ToString("#,##0.#0")</p>
+                <p class="price">€ @Product.Price.ToString("#,##0.#0")</p>
             }
         }
         <p class="description">@Trim(Product.Description)</p>

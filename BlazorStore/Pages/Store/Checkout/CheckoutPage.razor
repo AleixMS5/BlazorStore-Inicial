@@ -62,7 +62,7 @@ Precio total</th>
             <div class="col-12 col-md-6 shipping-wrap">
                 <h3>Shipping information</h3>
                 <div class="form-group">
-                    <label for="name">Name:</label> <ValidationMessage For="() => Name" />
+                    <label for="name">Nombre:</label> <ValidationMessage For="() => Name" />
                     <InputText @bind-Value="Name" id="name" class="form-control"></InputText>
                 </div>
                 <div class="form-group">
@@ -70,43 +70,43 @@ Precio total</th>
                     <InputText type="email" @bind-Value="Email" id="email" class="form-control"></InputText>
                 </div>
                 <div class="form-group">
-                    <label for="address">Address:</label> <ValidationMessage For="() => Address" />
+                    <label for="address">Dirección:</label> <ValidationMessage For="() => Address" />
                     <InputText @bind-Value="Address" id="address" class="form-control" maxlength="@FieldLenghts.User.Address"></InputText>
                 </div>
                 <div class="form-group">
-                    <label for="city">City:</label> <ValidationMessage For="() => City" />
+                    <label for="city">Ciudad:</label> <ValidationMessage For="() => City" />
                     <InputText @bind-Value="City" id="city" class="form-control" maxlength="@FieldLenghts.User.City"></InputText>
                 </div>
                 <div class="form-group">
-                    <label for="zip">Zip code:</label> <ValidationMessage For="() => ZipCode" />
+                    <label for="zip">Codigo postal:</label> <ValidationMessage For="() => ZipCode" />
                     <InputText @bind-Value="ZipCode" id="zip" class="form-control col-3" maxlength="@FieldLenghts.User.ZipCode"></InputText>
                 </div>
                 <div class="form-group">
-                    <label for="stete">State/Province:</label> <ValidationMessage For="() => State" />
+                    <label for="stete">Estado/Provincia:</label> <ValidationMessage For="() => State" />
                     <InputText @bind-Value="State" id="state" class="form-control" maxlength="@FieldLenghts.User.State"></InputText>
                 </div>
                 <div class="form-group">
-                    <label for="country">Country:</label> <ValidationMessage For="() => Country" />
+                    <label for="country">Pais:</label> <ValidationMessage For="() => Country" />
                     <InputText @bind-Value="Country" id="country" class="form-control" maxlength="@FieldLenghts.User.Country"></InputText>
                 </div>
             </div>
             <div class="col-12 col-md-6 payment-wrap">
                 <h3>Payment information</h3>
                 <div class="form-group">
-                    <label for="nameoncard">Name on card:</label> <ValidationMessage For="() => NameOnCard" />
+                    <label for="nameoncard">Nombre en la tarjeta:</label> <ValidationMessage For="() => NameOnCard" />
                     <InputText @bind-Value="NameOnCard" id="nameoncard" class="form-control" maxlength="@FieldLenghts.Payments.NameOnCard"></InputText>
                 </div>
                 <div class="form-group">
-                    <label for="cardnumber">Card number:</label> <ValidationMessage For="() => CardNumber" />
+                    <label for="cardnumber">Número de tarjeta:</label> <ValidationMessage For="() => CardNumber" />
                     <InputText @bind-Value="CardNumber" id="cardnumber" class="form-control" maxlength="@FieldLenghts.Payments.CardNumber"></InputText>
                     <div class="description small text-muted">Tip: use '4111111111111111' to test</div>
                 </div>
                 <div class="form-group">
-                    <label for="cvccode">CVC Code</label> <ValidationMessage For="() => CvcCode" />
+                    <label for="cvccode">Codigo CVC</label> <ValidationMessage For="() => CvcCode" />
                     <InputText @bind-Value="CvcCode" id="cvccode" class="form-control col-6 col-sm-10 col-md-6 col-lg-4" maxlength="@FieldLenghts.Payments.CvcCode"></InputText>
                 </div>
                 <div class="form-group">
-                    <label for="cardvalid">Valid until (MM/YYYY):</label> <ValidationMessage For="() => ValidUntilMonth" />
+                    <label for="cardvalid">Validez hasta (MM/YYYY):</label> <ValidationMessage For="() => ValidUntilMonth" />
                     <div>
                         <InputSelectNumber @bind-Value="ValidUntilMonth" class="form-control w-auto d-inline-block" id="cardvalid">
                             @for (int i = 1; i <= 12; i++)
