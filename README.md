@@ -1,3 +1,3 @@
 # BlazorStore-Inicial
 
-##Proyecto de aprendizaje en blazor
+## Proyecto de aprendizaje en blazor
