@@ -23,7 +23,6 @@
     <None Include="Pages\Admin\Products\ProductRemovePage.razor" />
     <None Include="Pages\Admin\Users\UsersPage.razor" />
     <None Include="Pages\Store\Checkout\CheckoutPage.razor" />
-    <None Include="Pages\Store\Checkout\ThankYouPage.razor" />
   </ItemGroup>
 
   <ItemGroup>

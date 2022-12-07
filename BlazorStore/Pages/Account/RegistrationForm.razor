@@ -53,7 +53,7 @@
             <InputText class="form-control col-12" id="country" @bind-Value="Country" maxlength="@FieldLenghts.User.Country"></InputText>
         </div>
     </fieldset>
-    <button class="btn btn-primary btn-lg" disabled="@isCreating">
+    <button class="btn btn-primary btn-lg" disabled="@isCreating" href="/">
         @if (isCreating)
         {
             @:<span class="spinner-border"></span> Signing up...
@@ -61,6 +61,7 @@
         else
         {
             @:Sign up
+          
         }
     </button>
 </EditForm>
