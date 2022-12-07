@@ -17,11 +17,12 @@
                             <a href="#" data-toggle="collapse" data-target="#collapse@(order.Id)" aria-expanded="true" aria-controls="order@(order.Id)">
                                 Pedido #@order.Id, Status: <strong>@order.Status</strong>.
                             </a>
-                            @if (order.DeliveryDate != null)
-                            {
-                                <div class="small text-muted mt-2">Entregado el: @order.DeliveryDate.Value.ToShortDateString() @order.DeliveryDate.Value.ToShortTimeString()</div>
-                            }
+                           
                         </h5>
+                        @if (order.DeliveryDate != null)
+                        {
+                            <div class="small text-muted mt-2">Entregado el: @order.DeliveryDate.Value.ToShortDateString() @order.DeliveryDate.Value.ToShortTimeString()</div>
+                        }
                     </div>
 
                     <div id="collapse@(order.Id)" class="collapse" aria-labelledby="heading@(order.Id)" data-parent="#order-list">

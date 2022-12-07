@@ -116,7 +116,7 @@ namespace BlazorStore.Model.Services.Orders
                         await db.SaveChangesAsync();
 
                     }
-                    catch (Exception ex)
+                    catch (Exception )
                     {
 
                         throw;

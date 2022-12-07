@@ -3,8 +3,8 @@
 <h3 class="featured-title">Products</h3>
 
 <div id="admin-products-wrap">
-    <a class="btn btn-secondary float-right" href="admin/products/create">Add new product</a>
-    <Grid GetItemsMethod="LoadProductsAsync" CountItemsMethod="CountProductsAsync" PageSize="80">
+    <a class="btn btn-secondary float-right" href="admin/products/create">Añadir un nuevo prducto</a>
+    <Grid GetItemsMethod="LoadProductsAsync" CountItemsMethod="CountProductsAsync" PageSize="10">
         <Column ItemType="ProductDto" Title="Id" SortField="id">
             @context.Id
         </Column>
@@ -23,14 +23,14 @@
             }
             @context.Price.ToString("#,##0.#0")
         </Column>
-        <Column ItemType="ProductDto" Title="<Destacado?">
+        <Column ItemType="ProductDto" Title="Destacado?">
             @if (context.IsHighlighted)
             {
                 <div class="text-success font-weight-bold">✓</div>
             }
         </Column>
         <Column ItemType="ProductDto">
-            <a class="btn btn-danger" href="admin/products/remove/@context.Id">Remove</a>
+            <a class="btn btn-danger" href="admin/products/remove/@context.Id">Borrar</a>
         </Column>
     </Grid>
 </div>

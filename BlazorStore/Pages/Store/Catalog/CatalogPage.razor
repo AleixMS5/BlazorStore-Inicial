@@ -6,21 +6,44 @@
 
 <div class="row catalog">
     <div class="col-12 col-sm-4 col-md-4 col-lg-3 filter">
-        <button class="navbar-toggler  d-sm-none mb-2" type="button"  data-target="#filter" aria-controls="filter" aria-expanded="true" aria-label="Toggle filter">
-            <span class="oi oi-magnifying-glass"></span>
-            Show/hide filter
+        <button class="navbar-toggler mb-2" type="button" @onclick="CambiarBoleans" data-toggle="collapse" data-target="#filter" aria-controls="filter" aria-expanded="true" aria-label="Toggle filter">
+            <span class="oi oi-magnifying-glass">
+                @if (amagat == true)
+                {
+                    <p>Enseñar Filtro</p>
+                
+                   
+                }
+                else 
+                {
+                    <p>Esconder Filtro</p>
+                   
+                }
+                
+            </span>
         </button>
 
         <div class="collapse show" id="filter">
-            <CatalogFilter @bind-Criteria="criteria" InitialCategoryName="@Category"></CatalogFilter>
+            <CatalogFilter @bind-Criteria="criteria" InitialCategoryName="@Category"/>
         </div>
     </div>
     <div class="col">
-        <ProductList Criteria="criteria"></ProductList>
+        <ProductList Criteria="criteria"/>
     </div>
 </div>
 
 @code {
+    bool amagat =false ;
+    void CambiarBoleans()
+    { if (!amagat )
+        {
+            amagat = true;
+        }else
+        {
+            amagat = false;
+        }
+
+    }
     [Parameter] public string Category { get; set; }
     SearchCriteria criteria = new SearchCriteria();
 }

@@ -10,10 +10,10 @@
         @totalItems items, showing page @currentPage of @totalPages.
     </p>
     <p>
-        <button class="btn btn-sm" @onclick="() => SetPageAsync(1)" disabled="@(isLoading || currentPage == 1)">&lt;&lt; First</button>
-        <button class="btn btn-sm" @onclick="() => SetPageAsync(currentPage - 1)" disabled="@(isLoading || currentPage == 1)">&lt; Previous</button>
-        <button class="btn btn-sm" @onclick="() => SetPageAsync(currentPage + 1)" disabled="@(isLoading || currentPage == totalPages)">Next &gt;</button>
-        <button class="btn btn-sm" @onclick="() => SetPageAsync(totalPages)" disabled="@(isLoading || currentPage == totalPages)">Last &gt;&gt;</button>
+        <button class="btn btn-sm" @onclick="() => SetPageAsync(1)" disabled="@(isLoading || currentPage == 1)">&lt;&lt; Primera</button>
+        <button class="btn btn-sm" @onclick="() => SetPageAsync(currentPage - 1)" disabled="@(isLoading || currentPage == 1)">&lt; Anterior</button>
+        <button class="btn btn-sm" @onclick="() => SetPageAsync(currentPage + 1)" disabled="@(isLoading || currentPage == totalPages)">Siguiente &gt;</button>
+        <button class="btn btn-sm" @onclick="() => SetPageAsync(totalPages)" disabled="@(isLoading || currentPage == totalPages)">Ultima &gt;&gt;</button>
         @if (isLoading)
         {
             <text>

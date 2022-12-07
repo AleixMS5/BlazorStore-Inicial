@@ -71,12 +71,12 @@
         </div>
         @if (IsRemoving)
         {
-            <button type="submit" disabled="@isSaving" class="btn btn-lg btn-danger">@(isSaving ? "Removing..." : "Remove")</button>
+            <button type="submit" disabled="@isSaving" class="btn btn-lg btn-danger">@(isSaving ? "Borrando..." : "Borrar")</button>
             <button type="button" @onclick="Cancel" disabled="@isSaving" class="btn btn-lg btn-light">Cancel</button>
         }
         else
         {
-            <button type="submit" disabled="@isSaving" class="btn btn-lg btn-success">@(isSaving ? "Saving..." : "Save")</button>
+            <button type="submit" disabled="@isSaving" class="btn btn-lg btn-success">@(isSaving ? "Guardando..." : "Guardar")</button>
             <button type="button" @onclick="Cancel" disabled="@isSaving" class="btn btn-lg btn-danger">Cancel</button>
         }
     </EditForm>

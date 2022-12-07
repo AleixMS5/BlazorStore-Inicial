@@ -37,7 +37,7 @@ else
                     <td class="text-center align-middle"><input type="number" @bind="item.Quantity" @onblur="()=>SetValueAsync(item)" min="1" max="@(Math.Pow(10, FieldLenghts.Product.Quantity) - 1)" maxlength="@FieldLenghts.Product.Quantity" /></td>
                     <td class="text-right align-middle">@item.UnitPrice.ToString("#,##0.#0")$</td>
                     <td class="text-right align-middle">@((item.UnitPrice * item.Quantity).ToString("#,##0.#0"))$</td>
-                    <td class="align-middle text-center"><button class="btn btn-sm bg-danger text-white" @onclick="() => RemoveItem(item.ProductId)">Remove</button></td>
+                    <td class="align-middle text-center"><button class="btn btn-sm bg-danger text-white" @onclick="() => RemoveItem(item.ProductId)">Borrar</button></td>
                 </tr>
             }
         </tbody>
