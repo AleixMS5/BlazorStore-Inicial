@@ -27,6 +27,7 @@ else
     IReadOnlyList<ProductDto> products;
     protected override async Task OnParametersSetAsync()
     {
+        await Task.Delay(5);
         products = await CatalogServices.SearchAsync(Criteria);
     }
 }

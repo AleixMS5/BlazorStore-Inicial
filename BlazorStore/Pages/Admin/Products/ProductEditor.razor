@@ -2,7 +2,14 @@
 @inject IImageStorage ImageStorage
 @inject ICategoryServices Categories
 
+@inject IJSRuntime JSRuntime
 <div id="product-editor-wrap">
+    @if (pepe){
+      <div class="alert-danger">Error, imagen demasiado grande </div>
+    }else{
+    <div> </div>
+    }
+   
     <EditForm Model="Product" OnValidSubmit="OnValidSubmit">
         <DataAnnotationsValidator />
         <div class="row">
@@ -88,7 +95,7 @@
     [Parameter] public EventCallback<ProductViewModel> ProductChanged { get; set; }
     [Parameter] public EventCallback OnCancel { get; set; }
     [Parameter] public bool IsRemoving { get; set; } = false;
-
+    bool pepe = false;
     bool isSaving;
     IReadOnlyList<CategoryDto> categories;
 
@@ -109,14 +116,20 @@
     }
 
     private async Task OnFileSelected(InputFileChangeEventArgs args)
-    {
-        if (args.FileCount == 0)
-            return;
+    {try{
+            if (args.FileCount == 0)
+                return;
 
-        var file = args.File;
-        using var stream = file.OpenReadStream();
-        await ImageStorage.SaveImageAsync(file.Name, stream);
-        Product.Image = "uploads/" + file.Name;
+            var file = args.File;
+            using var stream = file.OpenReadStream();
+            await ImageStorage.SaveImageAsync(file.Name, stream);
+            Product.Image = "uploads/" + file.Name;
+            pepe = false;
+        }
+        catch (Exception ex)
+        {
+            pepe = true;
+        }
     }
 
     private void AutoFillPrevPrice()
