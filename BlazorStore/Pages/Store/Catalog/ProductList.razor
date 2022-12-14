@@ -4,7 +4,7 @@
 
 @if (products != null && products.Any())
 {
-    <h4 class="listing-subtitle">Showing @Criteria.ToString() (@products.Count results), sorted by @Criteria.Sort.AsString()</h4>
+    <h4 class="listing-subtitle">Showing @Criteria.ToString(). (@products.Count results), sorted by @Criteria.Sort.AsString()</h4>
     <div class="product-list">
         @if(products!=null){
         @foreach (var product in products)
